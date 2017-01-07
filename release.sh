@@ -54,7 +54,19 @@ github-release release \
     --repo go-lytics \
     --tag $TAG \
     --name "Lytics CLI Latest" \
-    --description 'tbd'
+    --description "
+Scripts to download and save the binary and rename to lytics
+
+\`\`\`
+# linux/amd64
+curl -Lo lytics https://github.com/lytics/lytics/releases/download/latest/lytics_linux.$TAG && chmod +x lytics && sudo mv lytics /usr/local/bin/
+
+# OS X/amd64 
+curl -Lo lytics https://github.com/lytics/lytics/releases/download/lytics/lytics_mac.$TAG && chmod +x lytics && sudo mv lytics /usr/local/bin/
+
+
+\`\`\`
+"
 
 # upload a file, the mac osx amd64 binary
 echo "Creating and uploading mac client"

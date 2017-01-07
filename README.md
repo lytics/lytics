@@ -8,7 +8,7 @@ Would love any feature requests or ideas that would make this useful to you.
 
 ### Installation
 
-Download a binary from https://github.com/lytics/go-lytics/releases and rename to lytics.
+Download a binary from https://github.com/lytics/lytics/releases and rename to lytics.
 Or install from source.
 
 ```
