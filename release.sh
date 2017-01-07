@@ -51,7 +51,7 @@ github-release delete --user lytics --repo lytics --tag $TAG
 # create a formal release
 github-release release \
     --user lytics \
-    --repo go-lytics \
+    --repo lytics \
     --tag $TAG \
     --name "Lytics CLI Latest" \
     --description "
