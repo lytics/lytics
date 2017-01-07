@@ -47,7 +47,7 @@ lytics --id=last_2_hours segmentscan | jq '.'
 lytics --id=last_2_hours segmentscan > /tmp/users.json
 
 # same thing but with "Ad hoc query"
-lytics --id='
+lytics segmentscan '
 
 FILTER AND (
     lastvisit_ts > "now-2d"
@@ -55,7 +55,7 @@ FILTER AND (
 )
 FROM user
 
-' segmentscan > /tmp/users.json
+' > /tmp/users.json
 
 
 # use JQ to output a few fields
