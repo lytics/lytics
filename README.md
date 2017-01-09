@@ -1,7 +1,7 @@
 ## Lytics Command Line tool & Developers Aid
 
-The goal of this tool is to provide CLI access to Lytics api, 
-as well as a developers aid to enable writing and testing LQL 
+The goal of this tool is to provide CLI access to [Lytics api](https://www.getlytics.com/developers/rest-api), 
+as well as a developers aid to enable writing and testing LQL (Lytics Query Language)
 as easily as possible.
 
 Would love any feature requests or ideas that would make this useful to you.
