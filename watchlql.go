@@ -2,8 +2,10 @@ package main
 
 import (
 	"bytes"
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/url"
@@ -46,6 +48,45 @@ func (d *datafile) loadJson(of string) {
 			log.Printf("Could not convert row to qs? %v   %v\n", row, err)
 		}
 	}
+	d.data = qsargs
+}
+
+func (d *datafile) loadCsv(of string) {
+	f, err := os.Open("./" + of)
+	exitIfErr(err, fmt.Sprintf("Could not read csv file %v", of))
+
+	csvr := csv.NewReader(f)
+	csvr.TrailingComma = true // allow empty fields
+	headers, err := csvr.Read()
+	exitIfErr(err, fmt.Sprintf("Could not read csv headers %v", of))
+
+	qsargs := make([]url.Values, 0, 5)
+	rowCt := 0
+	for {
+		row, err := csvr.Read()
+
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			log.Fatalf("could not read csv %v", err)
+			continue
+		}
+		if len(row) != len(headers) {
+			log.Fatalf("headers/cols dont match, dropping expected:%d got:%d   vals=", len(headers), len(row), row)
+			continue
+		}
+		qs := make(url.Values)
+		for i, val := range row {
+			qs.Set(headers[i], val)
+		}
+		qsargs = append(qsargs, qs)
+		rowCt++
+		if rowCt > 5 {
+			break
+		}
+	}
+
 	d.data = qsargs
 }
 
@@ -165,6 +206,7 @@ func (l *lql) handleFile(of string, showOutput bool) {
 
 	case strings.HasSuffix(f, ".csv"):
 		//log.Println("handle csv file ", f)
+		df.loadCsv(of)
 	case strings.HasSuffix(f, ".json"):
 		//log.Println("handle json file ", f)
 		df.loadJson(of)
