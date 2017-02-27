@@ -80,6 +80,7 @@ github-release upload \
 
 # now linux
 go build
+echo "Creating and uploading linux client"
 github-release upload \
     --user lytics \
     --repo lytics \
