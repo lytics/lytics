@@ -15,20 +15,27 @@ import (
 )
 
 func (c *Cli) watch() (interface{}, error) {
-
 	l := newLql(c)
 	l.start()
-
 	return nil, nil
 }
 
-type datafile struct {
-	name          string
-	lql           string
-	data          []url.Values
-	checkedRecent bool
-	stream        string
-}
+type (
+	// Helper struct for watching, evaluating lql files
+	lql struct {
+		files map[string]*datafile
+		w     *fsnotify.Watcher
+		c     *Cli
+	}
+	// Describes a single Lql File and its data
+	datafile struct {
+		name          string
+		lql           string
+		data          []url.Values
+		checkedRecent bool
+		stream        string
+	}
+)
 
 func (d *datafile) loadJson(of string) {
 	by, err := ioutil.ReadFile("./" + of)
@@ -47,12 +54,6 @@ func (d *datafile) loadJson(of string) {
 		}
 	}
 	d.data = qsargs
-}
-
-type lql struct {
-	files map[string]*datafile
-	w     *fsnotify.Watcher
-	c     *Cli
 }
 
 func newLql(c *Cli) *lql {
@@ -84,7 +85,9 @@ func (l *lql) print(d *datafile) {
 		log.Printf("No lql found for %v \n\n", d.name)
 		return
 	}
+	log.Printf("doing data iter: %v \n", len(d.data))
 	for i, qs := range d.data {
+		log.Printf("data %v \n", qs)
 		ent, err := l.c.Client.GetQueryTest(qs, d.lql)
 		if err != nil {
 			log.Printf("Could not evaluate query/entity: %v \n\n", err)
@@ -100,12 +103,12 @@ func (l *lql) print(d *datafile) {
 			return
 		}
 	}
-
 }
 
 func (l *lql) verifyLql(d *datafile) error {
 	if d.lql != "" {
 		q, err := l.c.Client.PostQueryValidate(d.lql)
+		//log.Printf("did verify %v \n", err)
 		if err != nil {
 			fmt.Printf("ERROR: invalid lql statement\n%+v\n\n%v\n", q, err)
 			return err
@@ -117,7 +120,7 @@ func (l *lql) verifyLql(d *datafile) error {
 	return nil
 }
 
-func (l *lql) findRecent(d *datafile) {
+func (l *lql) findRecentEvents(d *datafile) {
 	d.checkedRecent = true
 	ss, err := l.c.Client.GetStreams("")
 	if err != nil {
@@ -155,19 +158,19 @@ func (l *lql) handleFile(of string, showOutput bool) {
 		if err := l.verifyLql(df); err != nil {
 			return
 		}
-
 		if _, err := os.Stat("./" + name + ".json"); os.IsNotExist(err) {
 			// ./name.json does not exist lets use recent
 			if !df.checkedRecent {
-				l.findRecent(df)
+				l.findRecentEvents(df)
 			}
 		}
 
 	case strings.HasSuffix(f, ".csv"):
 		//log.Println("handle csv file ", f)
 	case strings.HasSuffix(f, ".json"):
-		//log.Println("handle json file ", f)
+
 		df.loadJson(of)
+		//log.Printf("handle json file %q %q data:%v \n", df.name, df.stream, df.data)
 	default:
 		return
 	}
@@ -193,7 +196,7 @@ func (l *lql) watch() {
 				if event.Op&fsnotify.Write == fsnotify.Write || event.Op&fsnotify.Create == fsnotify.Create {
 					fn := strings.ToLower(event.Name)
 					fn = strings.Replace(fn, "./", "", 1)
-					//log.Println("modified file:", fn)
+					log.Println("modified file:", fn)
 					l.handleFile(fn, true)
 				}
 			case err, ok := <-l.w.Errors:
@@ -210,6 +213,10 @@ func (l *lql) watch() {
 	if err := l.w.Add("./"); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (df *datafile) complete() bool {
+	return df.lql != "" && len(df.data) > 0
 }
 
 // Convert a slice of bytes into an array by ensuring it is wrapped with []
