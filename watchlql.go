@@ -125,11 +125,13 @@ func (l *lql) print(d *datafile) {
 		log.Printf("No lql found for %v \n\n", d.name)
 		return
 	}
+
+	fmt.Printf("evaluating: %s.lql \n\n", d.name)
 	for i, qs := range d.data {
 		ent, err := l.c.Client.GetQueryTest(qs, d.lql)
 		if err != nil {
-			log.Printf("Could not evaluate query/entity: %v \n\n", err)
-			return
+			fmt.Printf("Could not evaluate query/entity: %v \n\tfor-data: %v\n\n", err, qs.Encode())
+			continue
 		}
 
 		// Output the user response
