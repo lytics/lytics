@@ -122,6 +122,8 @@ func (l *lql) print(d *datafile) {
 		return
 	}
 	if len(d.lql) == 0 {
+		l.printUsingCurrentQueries(d)
+		return
 		log.Printf("No lql found for %v \n\n", d.name)
 		return
 	}
@@ -129,6 +131,42 @@ func (l *lql) print(d *datafile) {
 	fmt.Printf("evaluating: %s.lql \n\n", d.name)
 	for i, qs := range d.data {
 		ent, err := l.c.Client.GetQueryTest(qs, d.lql)
+		if err != nil {
+			fmt.Printf("Could not evaluate query/entity: %v \n\tfor-data: %v\n\n", err, qs.Encode())
+			continue
+		}
+
+		// Output the user response
+		out, err := json.MarshalIndent(ent, "", "  ")
+		if err == nil {
+			fmt.Printf("\n%v\n\n", string(out))
+		}
+		if i > 1 {
+			return
+		}
+	}
+
+}
+func (l *lql) printUsingCurrentQueries(d *datafile) {
+	if len(d.data) == 0 {
+		log.Printf("No data found for %v \n\n", d.name)
+		return
+	}
+
+	fmt.Printf("evaluating: %s.json against current queries in your account \n\n", d.name)
+	for i, qs := range d.data {
+
+		state, err := json.MarshalIndent(qs, "", "  ")
+		if err != nil {
+			fmt.Printf("Could not json marshal: %v \n\tfor-data: %v\n\n", err, qs.Encode())
+			continue
+		}
+		// if err == nil {
+		// 	fmt.Printf("\n%v\n\n", string(state))
+		// }
+		params := url.Values{"stream": {d.name}, "state": {string(state)}}
+
+		ent, err := l.c.Client.GetEntityParams("user", "user_id", "should-never-ever-ever-match-12345", nil, params)
 		if err != nil {
 			fmt.Printf("Could not evaluate query/entity: %v \n\tfor-data: %v\n\n", err, qs.Encode())
 			continue
