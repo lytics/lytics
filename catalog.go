@@ -7,7 +7,7 @@ func (c *Cli) getSchema(table string) (interface{}, error) {
 		table = "user"
 	}
 
-	schema, err := c.Client.GetSchema(table)
+	schema, err := c.Client.GetSchemaTable(table)
 	if err != nil {
 		return nil, err
 	}
