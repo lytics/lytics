@@ -1,4 +1,4 @@
-package main
+package command
 
 func (c *Cli) getProviders(id interface{}) (interface{}, error) {
 	if id != nil && id != "" {

@@ -1,4 +1,4 @@
-package main
+package command
 
 import (
 	lytics "github.com/lytics/go-lytics"

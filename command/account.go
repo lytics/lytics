@@ -87,6 +87,3 @@ func (c *account) List(args []string) int {
 	c.writeList(items)
 	return 0
 }
-
-// func items(accts []lytics.Account) {
-// }

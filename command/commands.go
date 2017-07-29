@@ -30,6 +30,8 @@ func Commands(ui cli.Ui) map[string]cli.CommandFactory {
 
 	topLevelCommands := map[string]commandList{
 		"account": accountCommands,
+		"auth":    authCommands,
+		"schema":  schemaCommands,
 	}
 
 	cmds := make(map[string]cli.CommandFactory)
@@ -37,13 +39,20 @@ func Commands(ui cli.Ui) map[string]cli.CommandFactory {
 	for cmd, cmdList := range topLevelCommands {
 		for subCmdName, subCmd := range cmdList(api) {
 			sub := subCmd
-			cmds[fmt.Sprintf("%s %s", cmd, subCmdName)] = func() (cli.Command, error) {
+			if subCmdName != "" {
+				subCmdName = fmt.Sprintf(" %s", subCmdName)
+			}
+			cmds[fmt.Sprintf("%s%s", cmd, subCmdName)] = func() (cli.Command, error) {
 				return sub, nil
 			}
 		}
 
 	}
 	return cmds
+}
+
+type Cli struct {
+	Client *lytics.Client
 }
 
 type command struct {
@@ -161,4 +170,15 @@ func (c *apiCommand) exitIfErr(err error, msg string) {
 		c.ui.Error(fmt.Sprintf("%v: %s\n", err, msg))
 		os.Exit(1)
 	}
+}
+func exitIfErr(err error, msg string) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v: %s\n", err, msg)
+		os.Exit(1)
+	}
+}
+
+func errExit(err error, msg string) {
+	fmt.Fprintf(os.Stderr, "%v: %s\n", err, msg)
+	os.Exit(1)
 }
