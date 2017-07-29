@@ -60,11 +60,11 @@ func helpFunc(commands map[string]cli.CommandFactory) string {
 		if len(parts) == 2 {
 			if lastSub != parts[0] {
 				buf.WriteString(fmt.Sprintf("\n%s\n", parts[0]))
-				lastSub = parts[0]
 			}
 		} else {
 			buf.WriteString(fmt.Sprintf("\n%s\n", key))
 		}
+		lastSub = parts[0]
 		commandFunc, ok := commands[key]
 		if !ok {
 			// This should never happen since we JUST built the list of

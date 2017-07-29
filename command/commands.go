@@ -18,7 +18,6 @@ Global Options:
   --key=xyz         reads LIOKEY envvar, or pass ass command line api key
   --datakey=xyz     Data Api Key, Reads LIODATAKEY envvar as default
   --format=table    [json,csv,table] output as tabular data?  csv?  json?
-  --aid=aid         Account id shortcut
 `
 
 type commandList func(api *apiCommand) map[string]*command
@@ -31,7 +30,9 @@ func Commands(ui cli.Ui) map[string]cli.CommandFactory {
 	topLevelCommands := map[string]commandList{
 		"account": accountCommands,
 		"auth":    authCommands,
+		"user":    userCommands,
 		"schema":  schemaCommands,
+		"segment": segmentCommands,
 	}
 
 	cmds := make(map[string]cli.CommandFactory)
@@ -101,6 +102,8 @@ func (c *apiCommand) init(args []string, help func() string) {
 		os.Exit(1)
 	}
 
+	//c.ui.Info(fmt.Sprintf("args %v", c.f.Args()))
+
 	// create lytics client with auth info
 	c.l = lytics.NewLytics(c.apiKey, c.dataKey, nil)
 }
@@ -109,10 +112,13 @@ func (c *apiCommand) writeTable(item interface{}) {
 
 	cw := datasource.NewContextWrapper(item)
 
+	//fmt.Printf("%#v \n\n", item)
+
 	row := make([]interface{}, len(c.cols))
 	for i, col := range c.cols {
 		table.AddHeaders(col)
 		val, _ := cw.Get(col)
+		//fmt.Printf("%s  %#v \n", col, val)
 		if val != nil {
 			row[i] = val.Value()
 		}
@@ -133,6 +139,7 @@ func (c *apiCommand) writeTableList(items []interface{}) {
 		row := make([]interface{}, len(c.cols))
 		for i, col := range c.cols {
 			val, _ := cw.Get(col)
+			//fmt.Println("%s  %#v", col, val)
 			if val != nil {
 				row[i] = val.Value()
 			}
@@ -143,6 +150,7 @@ func (c *apiCommand) writeTableList(items []interface{}) {
 	fmt.Println(table.Render())
 }
 func (c *apiCommand) writeSingle(item interface{}) {
+	//c.ui.Info(fmt.Sprintf("write sigle format=%v", c.format))
 	if c.format == "table" {
 		c.writeTable(item)
 		return
