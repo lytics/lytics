@@ -3,8 +3,6 @@ package command
 import (
 	"fmt"
 	"strings"
-
-	lytics "github.com/lytics/go-lytics"
 )
 
 func segmentCommands(api *apiCommand) map[string]*command {
@@ -12,6 +10,7 @@ func segmentCommands(api *apiCommand) map[string]*command {
 	return map[string]*command{
 		"list": &command{c.HelpList, c.List, "Segment List, segments for account."},
 		"show": &command{c.HelpGet, c.Get, "Segment Show Summary."},
+		"scan": &command{c.HelpScan, c.Scan, "Segment Scan List Users (or content, etc)."},
 	}
 }
 
@@ -39,6 +38,26 @@ Usage: lytics segment show [options] id
 
 Options:
     --table="user"
+`, globalHelp)
+	return strings.TrimSpace(helpText)
+}
+func (c *segment) HelpScan() string {
+	helpText := fmt.Sprintf(`
+Usage: lytics segment scan [options] id
+
+  Get Entities in segment
+
+  lytics segment scan --format=json "all"
+
+  lytics segment scan --format=json '
+
+FILTER * from content
+'
+
+%s
+
+Options:
+
 `, globalHelp)
 	return strings.TrimSpace(helpText)
 }
@@ -79,22 +98,51 @@ func (c *segment) List(args []string) int {
 	return 0
 }
 
-func (c *Cli) getSegments(table string, segments []string) (interface{}, error) {
-	if len(segments) == 1 {
-		segment, err := c.Client.GetSegment(segments[0])
-		if err != nil {
-			return nil, err
-		}
+func (c *segment) Size(args []string) int {
 
-		return segment, nil
-	} else {
-		segments, err := c.Client.GetSegments(table)
-		if err != nil {
-			return nil, err
-		}
-
-		return segments, nil
+	c.init(args, c.HelpSize)
+	id := c.f.Arg(0)
+	if id == "" {
+		c.ui.Error("Must provide segment ID/Slug")
+		return 1
 	}
+	c.cols = []string{"name", "SegKind", "created", "filterql"}
+
+	segment, err := c.l.GetSegment(id)
+	c.exitIfErr(err, "Could not get segment")
+
+	c.writeSingle(segment)
+	return 0
+}
+
+func (c *segment) Scan(args []string) int {
+	// table := "user"
+	// c.f.StringVar(&table, "table", table, "Table (default = user)")
+	c.init(args, c.HelpScan)
+	idOrQl := c.f.Arg(0)
+	if idOrQl == "" {
+		c.ui.Error("Must provide segment ID/Slug/Ql")
+		return 1
+	}
+
+	c.cols = []string{"name", "SegKind", "created", "filterql"}
+
+	scan := c.l.PageSegment(idOrQl)
+
+	ct := 0
+	// handle processing the entities
+	for {
+		e := scan.Next()
+		if e == nil {
+			break
+		}
+		c.writeSingle(&e)
+		ct++
+		if c.limit > 0 && ct == c.limit {
+			return 0
+		}
+	}
+	return 0
 }
 
 func (c *Cli) getSegmentSizes(segments []string) (interface{}, error) {
@@ -122,23 +170,4 @@ func (c *Cli) getSegmentAttributions(segments []string, limit int) (interface{},
 	}
 
 	return attributions, nil
-}
-
-func (c *Cli) getEntityScan(segmentIdOrQl string, limit int, handler lytics.EntityHandler) {
-
-	scan := c.Client.PageSegment(segmentIdOrQl)
-
-	ct := 0
-	// handle processing the entities
-	for {
-		e := scan.Next()
-		if e == nil {
-			break
-		}
-		handler(&e)
-		ct++
-		if limit > 0 && ct == limit {
-			return
-		}
-	}
 }

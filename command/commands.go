@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/apcera/termtables"
 	"github.com/araddon/qlbridge/datasource"
@@ -77,9 +78,11 @@ type apiCommand struct {
 	f       *flag.FlagSet
 	ui      cli.Ui
 	aid     int
+	limit   int
 	format  string
 	apiKey  string
 	dataKey string
+	fields  []string
 	args    []string
 	cols    []string
 }
@@ -92,15 +95,19 @@ func (c *apiCommand) init(args []string, help func() string) {
 	if format == "" {
 		format = "table"
 	}
+	fields := ""
 	c.f.IntVar(&c.aid, "aid", 0, "Account aid")
+	c.f.IntVar(&c.limit, "limit", 0, "Page Size/Limit for apis that support paging (segment scan)")
 	c.f.StringVar(&c.format, "format", format, "Output format Reads LYTICSFORMAT envvar as default")
 	c.f.StringVar(&c.apiKey, "key", os.Getenv("LIOKEY"), "Api Key, Reads LIOKEY envvar as default")
 	c.f.StringVar(&c.dataKey, "datakey", os.Getenv("LIODATAKEY"), "Data Key, Reads LIODATAKEY envvar as default")
+	c.f.StringVar(&fields, "fields", "", "List of fields to show in table")
 
 	if err := c.f.Parse(c.args); err != nil {
 		c.ui.Error(fmt.Sprintf("Could not parse args %v", err))
 		os.Exit(1)
 	}
+	c.fields = strings.Split(fields, ",")
 
 	//c.ui.Info(fmt.Sprintf("args %v", c.f.Args()))
 
