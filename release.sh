@@ -59,12 +59,14 @@ Scripts to download and save the binary and rename to lytics
 
 \`\`\`
 # linux/amd64
-curl -Lo lytics https://github.com/lytics/lytics/releases/download/latest/lytics_linux && chmod +x lytics && sudo mv lytics /usr/local/bin/
+curl -Lo lytics https://github.com/lytics/lytics/releases/download/latest/lytics_linux \\
+  && chmod +x lytics \\
+  && sudo mv lytics /usr/local/bin/
 
 # OS X/amd64 
-curl -Lo lytics https://github.com/lytics/lytics/releases/download/lytics/lytics_mac && chmod +x lytics && sudo mv lytics /usr/local/bin/
-
-
+curl -Lo lytics https://github.com/lytics/lytics/releases/download/lytics/lytics_mac \\
+  && chmod +x lytics \\
+  && sudo mv lytics /usr/local/bin/
 \`\`\`
 "
 
