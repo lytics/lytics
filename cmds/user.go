@@ -1,4 +1,4 @@
-package main
+package cmds
 
 func (c *Cli) getUsers(id interface{}) (interface{}, error) {
 	if id != nil && id != "" {

@@ -1,4 +1,4 @@
-package main
+package cmds
 
 func (c *Cli) getQueries(alias string) (interface{}, error) {
 	if alias == "" {

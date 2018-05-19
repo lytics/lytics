@@ -1,6 +1,4 @@
-package main
-
-import ()
+package cmds
 
 func (c *Cli) getSchema(table string) (interface{}, error) {
 	if table == "" {

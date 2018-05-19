@@ -1,6 +1,6 @@
 ## Lytics Command Line tool & Developers Aid
 
-The goal of this tool is to provide CLI access to [Lytics api](https://www.getlytics.com/developers/rest-api), 
+The goal of this tool is to provide CLI access to [Lytics api](https://learn.lytics.com), 
 as well as a developers aid to enable writing and testing LQL (Lytics Query Language)
 as easily as possible.
 
@@ -19,8 +19,7 @@ go get -u github.com/lytics/lytics
 
 ### Usage
 
-All examples use JQ https://stedolan.github.io/jq/ to 
-prettify the json output.
+All examples use JQ https://stedolan.github.io/jq/ to prettify the json output.
 
 ```
 

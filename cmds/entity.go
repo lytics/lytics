@@ -1,4 +1,4 @@
-package main
+package cmds
 
 func (c *Cli) getEntity(entitytype, fieldname, fieldval string, fields []string) (interface{}, error) {
 	entity, err := c.Client.GetEntity(entitytype, fieldname, fieldval, fields)
