@@ -186,7 +186,7 @@ func (l *lql) printUsingCurrentQueries(d *datafile) {
 
 func (l *lql) verifyLql(d *datafile) error {
 	if d.lql != "" {
-		ql, err := l.c.Client.PostQueryValidate(d.lql)
+		ql, err := l.c.Client.PostQueryValidateSegment(d.lql)
 		if err != nil {
 			fmt.Printf("ERROR: invalid lql statement\n%+v\n\n%v\n", ql, err)
 			return err
