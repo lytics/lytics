@@ -14,14 +14,40 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	lytics "github.com/lytics/go-lytics"
+	"github.com/urfave/cli"
 )
 
+/*
+    [watch]
+         watch the current folder for .lql, .json files to evaluate
+         the .lql query against the data in .json to preview output.
+
+         .lql file name must match the json file name.
+
+         For Example:
+            cd /tmp
+            ls *.lql       # assume a temp.lql
+            cat temp.json  # file of data
+
+         -------
+         example:
+         -------
+			  lytics watch
 func (c *Cli) watch() (interface{}, error) {
 
 	l := newLql(c)
 	l.start()
 
 	return nil, nil
+}
+*/
+func schemaQueryWatch(c *cli.Context) error {
+	if len(c.Args()) == 0 {
+		return fmt.Errorf(`expected one arg ( ".")`)
+	}
+	l := newLql()
+	l.start()
+	return nil
 }
 
 type datafile struct {
@@ -73,7 +99,7 @@ func (d *datafile) loadCsv(of string) {
 			continue
 		}
 		if len(row) != len(headers) {
-			log.Fatalf("headers/cols dont match, dropping expected:%d got:%d   vals=", len(headers), len(row), row)
+			log.Fatalf("headers/cols dont match, dropping expected:%d got:%d   vals=%v\n", len(headers), len(row), row)
 			continue
 		}
 		qs := make(url.Values)
@@ -93,16 +119,14 @@ func (d *datafile) loadCsv(of string) {
 type lql struct {
 	files map[string]*datafile
 	w     *fsnotify.Watcher
-	c     *Cli
 }
 
-func newLql(c *Cli) *lql {
+func newLql() *lql {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		panic(err.Error())
 	}
 	return &lql{
-		c:     c,
 		w:     watcher,
 		files: make(map[string]*datafile),
 	}
@@ -130,7 +154,7 @@ func (l *lql) print(d *datafile) {
 
 	fmt.Printf("evaluating: %s.lql \n\n", d.name)
 	for i, qs := range d.data {
-		ent, err := l.c.Client.GetQueryTest(qs, d.lql)
+		ent, err := client.GetQueryTest(qs, d.lql)
 		if err != nil {
 			fmt.Printf("Could not evaluate query/entity: %v \n\tfor-data: %v\n\n", err, qs.Encode())
 			continue
@@ -166,7 +190,7 @@ func (l *lql) printUsingCurrentQueries(d *datafile) {
 		// }
 		params := url.Values{"stream": {d.name}, "state": {string(state)}}
 
-		ent, err := l.c.Client.GetEntityParams("user", "user_id", "should-never-ever-ever-match-12345", nil, params)
+		ent, err := client.GetEntityParams("user", "user_id", "should-never-ever-ever-match-12345", nil, params)
 		if err != nil {
 			fmt.Printf("Could not evaluate query/entity: %v \n\tfor-data: %v\n\n", err, qs.Encode())
 			continue
@@ -186,7 +210,7 @@ func (l *lql) printUsingCurrentQueries(d *datafile) {
 
 func (l *lql) verifyLql(d *datafile) error {
 	if d.lql != "" {
-		ql, err := l.c.Client.PostQueryValidate(d.lql)
+		ql, err := client.PostQueryValidate(d.lql)
 		if err != nil {
 			fmt.Printf("ERROR: invalid lql statement\n%+v\n\n%v\n", ql, err)
 			return err
@@ -203,7 +227,7 @@ func (l *lql) verifyLql(d *datafile) error {
 
 func (l *lql) findRecent(d *datafile) {
 	d.checkedRecent = true
-	ss, err := l.c.Client.GetStreams("")
+	ss, err := client.GetStreams("")
 	if err != nil {
 		log.Printf("Could not load streams data: %v \n\n", err)
 		return

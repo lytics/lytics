@@ -1,14 +1,104 @@
 package cmds
 
-func (c *Cli) getSchema(table string) (interface{}, error) {
-	if table == "" {
-		table = "user"
-	}
+import (
+	"fmt"
 
-	schema, err := c.Client.GetSchemaTable(table)
-	if err != nil {
-		return nil, err
-	}
+	lytics "github.com/lytics/go-lytics"
+	"github.com/urfave/cli"
+)
 
-	return schema, nil
+func init() {
+	addCommand(cli.Command{
+		Name:     "schema",
+		Usage:    "Schema (Catalog) information about Lytics account Tables & Queries",
+		Category: "Data API",
+		Subcommands: []cli.Command{
+			{
+				Name:  "tables",
+				Usage: "Api of tables that make up schema",
+				Subcommands: []cli.Command{
+					{
+						Name:      "get",
+						Usage:     "Show details of current requested table schema",
+						UsageText: "Get Detail of Single Table Schema",
+						ArgsUsage: "[table name]",
+						Action:    schemaTableGet,
+					},
+					{
+						Name:   "list",
+						Usage:  "List Tables",
+						Action: schemaTableList,
+					},
+				},
+			},
+			{
+				Name:  "queries",
+				Usage: "Api of queries that make up schema",
+				Subcommands: []cli.Command{
+					{
+						Name:      "get",
+						Usage:     "Show details of single query by alias",
+						UsageText: "Get Detail of Single Query",
+						ArgsUsage: "[query alias aka slug]",
+						Action:    schemaQueryGet,
+					},
+					{
+						Name:   "list",
+						Usage:  "List Queries",
+						Action: schemaQueryList,
+					},
+					{
+						Name:   "watch",
+						Usage:  "Watch Queries",
+						Action: schemaQueryWatch,
+					},
+				},
+			},
+		},
+	})
+}
+
+func schemaTableGet(c *cli.Context) error {
+	id := "user"
+	if len(c.Args()) > 0 {
+		id = c.Args().First()
+	}
+	item, err := client.GetSchemaTable(id)
+	exitIfErr(err, "Could not get schema %q from api", id)
+	list := make([]lytics.TableWriter, len(item.Columns))
+	for i, item := range item.Columns {
+		list[i] = &item
+	}
+	resultWrite(c, list)
+	return nil
+}
+func schemaTableList(c *cli.Context) error {
+	items, err := client.GetSchema()
+	exitIfErr(err, "Could not get schema tables list")
+	list := make([]lytics.TableWriter, 0, len(items))
+	for _, item := range items {
+		list = append(list, item)
+	}
+	resultWrite(c, list)
+	return nil
+}
+func schemaQueryGet(c *cli.Context) error {
+	if len(c.Args()) == 0 {
+		return fmt.Errorf("expected one arg (id)")
+	}
+	id := c.Args().First()
+	item, err := client.GetQuery(id)
+	exitIfErr(err, "Could not get schema query %q from api", id)
+	resultWrite(c, &item)
+	return nil
+}
+func schemaQueryList(c *cli.Context) error {
+	items, err := client.GetQueries()
+	exitIfErr(err, "Could not get schema queries list")
+	list := make([]lytics.TableWriter, 0, len(items))
+	for _, item := range items {
+		list = append(list, item)
+	}
+	resultWrite(c, list)
+	return nil
 }
