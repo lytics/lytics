@@ -186,17 +186,18 @@ func (l *lql) printUsingCurrentQueries(d *datafile) {
 
 func (l *lql) verifyLql(d *datafile) error {
 	if d.lql != "" {
-		ql, err := l.c.Client.PostQueryValidate(d.lql)
+		data, err := l.c.Client.PostQueryValidateSegment(d.lql)
 		if err != nil {
-			fmt.Printf("ERROR: invalid lql statement\n%+v\n\n%v\n", ql, err)
+			fmt.Printf("ERROR: invalid lql statement\n%+v\n\n%v\n", data, err)
 			return err
 		}
-		if len(ql) > 0 {
-			q := ql[0]
-			if q.From != "" {
-				d.stream = q.From
-			}
-		}
+		// commented code below for cases where lql query returned as `data`
+		// if len(ql) > 0 {
+		// 	q := ql[0]
+		// 	if q.From != "" {
+		// 		d.stream = q.From
+		// 	}
+		// }
 	}
 	return nil
 }
