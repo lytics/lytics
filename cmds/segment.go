@@ -127,7 +127,7 @@ func getEntityScan(segmentIdOrQl string, limit int, handler lytics.EntityHandler
 		if e == nil {
 			break
 		}
-		handler(&e)
+		handler(e)
 		ct++
 		if limit > 0 && ct == limit {
 			return

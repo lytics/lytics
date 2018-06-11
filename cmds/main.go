@@ -8,7 +8,6 @@ import (
 
 	"github.com/apcera/termtables"
 	"github.com/araddon/gou"
-
 	lytics "github.com/lytics/go-lytics"
 	"github.com/urfave/cli"
 )

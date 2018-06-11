@@ -10,7 +10,7 @@ import (
 func init() {
 	addCommand(cli.Command{
 		Name:     "schema",
-		Usage:    "Schema (Catalog) information about Lytics account Tables & Queries",
+		Usage:    "Schema (Catalog) information about Lytics Tables & Queries",
 		Category: "Data API",
 		Subcommands: []cli.Command{
 			{
