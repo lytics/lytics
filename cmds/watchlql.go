@@ -1,4 +1,4 @@
-package main
+package cmds
 
 import (
 	"bytes"
@@ -12,10 +12,28 @@ import (
 	"os"
 	"strings"
 
+	"github.com/araddon/gou"
 	"github.com/fsnotify/fsnotify"
 	lytics "github.com/lytics/go-lytics"
+	"github.com/urfave/cli"
 )
 
+/*
+    [watch]
+         watch the current folder for .lql, .json files to evaluate
+         the .lql query against the data in .json to preview output.
+
+         .lql file name must match the json file name.
+
+         For Example:
+            cd /tmp
+            ls *.lql       # assume a temp.lql
+            cat temp.json  # file of data
+
+         -------
+         example:
+         -------
+			  lytics watch
 func (c *Cli) watch() (interface{}, error) {
 
 	l := newLql(c)
@@ -23,9 +41,19 @@ func (c *Cli) watch() (interface{}, error) {
 
 	return nil, nil
 }
+*/
+func schemaQueryWatch(c *cli.Context) error {
+	if len(c.Args()) == 0 {
+		return fmt.Errorf(`expected one arg ( ".")`)
+	}
+	l := newLql()
+	l.start()
+	return nil
+}
 
 type datafile struct {
 	name          string
+	file          string
 	lql           string
 	data          []url.Values
 	checkedRecent bool
@@ -73,7 +101,7 @@ func (d *datafile) loadCsv(of string) {
 			continue
 		}
 		if len(row) != len(headers) {
-			log.Fatalf("headers/cols dont match, dropping expected:%d got:%d   vals=", len(headers), len(row), row)
+			log.Fatalf("headers/cols dont match, dropping expected:%d got:%d   vals=%v\n", len(headers), len(row), row)
 			continue
 		}
 		qs := make(url.Values)
@@ -93,16 +121,14 @@ func (d *datafile) loadCsv(of string) {
 type lql struct {
 	files map[string]*datafile
 	w     *fsnotify.Watcher
-	c     *Cli
 }
 
-func newLql(c *Cli) *lql {
+func newLql() *lql {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		panic(err.Error())
 	}
 	return &lql{
-		c:     c,
 		w:     watcher,
 		files: make(map[string]*datafile),
 	}
@@ -130,7 +156,7 @@ func (l *lql) print(d *datafile) {
 
 	fmt.Printf("evaluating: %s.lql \n\n", d.name)
 	for i, qs := range d.data {
-		ent, err := l.c.Client.GetQueryTest(qs, d.lql)
+		ent, err := client.GetQueryTest(qs, d.lql)
 		if err != nil {
 			fmt.Printf("Could not evaluate query/entity: %v \n\tfor-data: %v\n\n", err, qs.Encode())
 			continue
@@ -153,7 +179,7 @@ func (l *lql) printUsingCurrentQueries(d *datafile) {
 		return
 	}
 
-	fmt.Printf("evaluating: %s.json against current queries in your account \n\n", d.name)
+	fmt.Printf("evaluating: %q against current queries in your account \n\n", d.file)
 	for i, qs := range d.data {
 
 		state, err := json.MarshalIndent(qs, "", "  ")
@@ -161,12 +187,15 @@ func (l *lql) printUsingCurrentQueries(d *datafile) {
 			fmt.Printf("Could not json marshal: %v \n\tfor-data: %v\n\n", err, qs.Encode())
 			continue
 		}
-		// if err == nil {
-		// 	fmt.Printf("\n%v\n\n", string(state))
-		// }
-		params := url.Values{"stream": {d.name}, "state": {string(state)}}
+		gou.Infof("data: %v", qs)
+		params := url.Values{
+			"stream":     {d.name},
+			"meta":       {"true"},
+			"mergestate": {"true"},
+			"state":      {string(state)},
+		}
 
-		ent, err := l.c.Client.GetEntityParams("user", "user_id", "should-never-ever-ever-match-12345", nil, params)
+		ent, err := client.GetEntityParams("user", "user_id", "should-never-ever-ever-match-12345", nil, params)
 		if err != nil {
 			fmt.Printf("Could not evaluate query/entity: %v \n\tfor-data: %v\n\n", err, qs.Encode())
 			continue
@@ -186,7 +215,7 @@ func (l *lql) printUsingCurrentQueries(d *datafile) {
 
 func (l *lql) verifyLql(d *datafile) error {
 	if d.lql != "" {
-		data, err := l.c.Client.PostQueryValidateSegment(d.lql)
+		data, err := client.PostQueryValidateSegment(d.lql)
 		if err != nil {
 			fmt.Printf("ERROR: invalid lql statement\n%+v\n\n%v\n", data, err)
 			return err
@@ -204,7 +233,7 @@ func (l *lql) verifyLql(d *datafile) error {
 
 func (l *lql) findRecent(d *datafile) {
 	d.checkedRecent = true
-	ss, err := l.c.Client.GetStreams("")
+	ss, err := client.GetStreams("")
 	if err != nil {
 		log.Printf("Could not load streams data: %v \n\n", err)
 		return
@@ -225,7 +254,7 @@ func (l *lql) handleFile(of string, showOutput bool) {
 	name := strings.Split(f, ".")[0]
 	df, exists := l.files[name]
 	if !exists {
-		df = &datafile{name: name}
+		df = &datafile{name: name, file: f}
 		l.files[name] = df
 	}
 	switch {

@@ -1,6 +1,6 @@
 ## Lytics Command Line tool & Developers Aid
 
-The goal of this tool is to provide CLI access to [Lytics api](https://www.getlytics.com/developers/rest-api), 
+The goal of this tool is to provide CLI access to [Lytics API](https://learn.lytics.com), 
 as well as a developers aid to enable writing and testing LQL (Lytics Query Language)
 as easily as possible.
 
@@ -19,8 +19,7 @@ go get -u github.com/lytics/lytics
 
 ### Usage
 
-All examples use JQ https://stedolan.github.io/jq/ to 
-prettify the json output.
+All examples use JQ https://stedolan.github.io/jq/ to prettify the json output.
 
 ```
 
@@ -37,17 +36,17 @@ Exporting CSV files, with usage.
 ```
 
 # Scan a segment by id
-lytics --id=ab93a9801a72871d689342556b0de2e9 segmentscan | jq '.'
+lytics segment scan ab93a9801a72871d689342556b0de2e9 | jq '.'
 
 # Scan a segment by Slug
-lytics --id=last_2_hours segmentscan | jq '.'
+lytics segment scan last_2_hours | jq '.'
 
 # write out this segment to temp file so we can play with jq
 
-lytics --id=last_2_hours segmentscan > /tmp/users.json
+lytics segment scan last_2_hours > /tmp/users.json
 
 # same thing but with "Ad hoc query"
-lytics segmentscan '
+lytics segment scan '
 
 FILTER AND (
     lastvisit_ts > "now-2d"
@@ -110,7 +109,7 @@ ALIAS my_query
 
 
 # start watching
-lytics watch | jq '.'
+lytics schema queries watch .
 
 # now edit, json results of how data is interpreted is output
 
@@ -136,7 +135,7 @@ export LIOKEY="your_api_key"
 cd /tmp
 
 # start watching in background
-lytics watch &
+lytics schema queries watch &
 
 
 # create an lql file

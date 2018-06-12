@@ -64,7 +64,7 @@ curl -Lo lytics https://github.com/lytics/lytics/releases/download/latest/lytics
   && sudo mv lytics /usr/local/bin/
 
 # OS X/amd64 
-curl -Lo lytics https://github.com/lytics/lytics/releases/download/lytics/lytics_mac \\
+curl -Lo lytics https://github.com/lytics/lytics/releases/download/latest/lytics_mac \\
   && chmod +x lytics \\
   && sudo mv lytics /usr/local/bin/
 \`\`\`
