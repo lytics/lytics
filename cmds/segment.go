@@ -45,16 +45,6 @@ func init() {
 			},
 		},
 	})
-	/*
-		case "segmentscan":
-			if id == "" && len(flag.Args()) == 2 {
-				id = flag.Args()[1]
-			}
-			c.getEntityScan(id, limit, func(e *lytics.Entity) {
-				fmt.Println(e.PrettyJson())
-			})
-			return "", nil
-	*/
 }
 func segmentGet(c *cli.Context) error {
 	if len(c.Args()) == 0 {
