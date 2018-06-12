@@ -31,9 +31,10 @@ func init() {
 				Action: segmentList,
 			},
 			{
-				Name:   "scan",
-				Usage:  "List Entities in a Segment.  NOTE, this is new-line delimitted json output.",
-				Action: segmentScan,
+				Name:      "scan",
+				Usage:     "List Entities in a Segment.  NOTE, this is new-line delimitted json output.",
+				ArgsUsage: "[id or slug of Segment]",
+				Action:    segmentScan,
 				Flags: []cli.Flag{
 					cli.Int64Flag{
 						Name:  "limit",

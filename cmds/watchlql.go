@@ -12,6 +12,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/araddon/gou"
 	"github.com/fsnotify/fsnotify"
 	lytics "github.com/lytics/go-lytics"
 	"github.com/urfave/cli"
@@ -52,6 +53,7 @@ func schemaQueryWatch(c *cli.Context) error {
 
 type datafile struct {
 	name          string
+	file          string
 	lql           string
 	data          []url.Values
 	checkedRecent bool
@@ -177,7 +179,7 @@ func (l *lql) printUsingCurrentQueries(d *datafile) {
 		return
 	}
 
-	fmt.Printf("evaluating: %s.json against current queries in your account \n\n", d.name)
+	fmt.Printf("evaluating: %q against current queries in your account \n\n", d.file)
 	for i, qs := range d.data {
 
 		state, err := json.MarshalIndent(qs, "", "  ")
@@ -185,10 +187,13 @@ func (l *lql) printUsingCurrentQueries(d *datafile) {
 			fmt.Printf("Could not json marshal: %v \n\tfor-data: %v\n\n", err, qs.Encode())
 			continue
 		}
-		// if err == nil {
-		// 	fmt.Printf("\n%v\n\n", string(state))
-		// }
-		params := url.Values{"stream": {d.name}, "state": {string(state)}}
+		gou.Infof("data: %v", qs)
+		params := url.Values{
+			"stream":     {d.name},
+			"meta":       {"true"},
+			"mergestate": {"true"},
+			"state":      {string(state)},
+		}
 
 		ent, err := client.GetEntityParams("user", "user_id", "should-never-ever-ever-match-12345", nil, params)
 		if err != nil {
@@ -249,7 +254,7 @@ func (l *lql) handleFile(of string, showOutput bool) {
 	name := strings.Split(f, ".")[0]
 	df, exists := l.files[name]
 	if !exists {
-		df = &datafile{name: name}
+		df = &datafile{name: name, file: f}
 		l.files[name] = df
 	}
 	switch {
