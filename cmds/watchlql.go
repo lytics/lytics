@@ -18,30 +18,6 @@ import (
 	"github.com/urfave/cli"
 )
 
-/*
-    [watch]
-         watch the current folder for .lql, .json files to evaluate
-         the .lql query against the data in .json to preview output.
-
-         .lql file name must match the json file name.
-
-         For Example:
-            cd /tmp
-            ls *.lql       # assume a temp.lql
-            cat temp.json  # file of data
-
-         -------
-         example:
-         -------
-			  lytics watch
-func (c *Cli) watch() (interface{}, error) {
-
-	l := newLql(c)
-	l.start()
-
-	return nil, nil
-}
-*/
 func schemaQueryWatch(c *cli.Context) error {
 	if len(c.Args()) == 0 {
 		return fmt.Errorf(`expected one arg ( ".")`)

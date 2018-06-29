@@ -15,23 +15,6 @@ import (
 var (
 	apikey       string
 	outputFormat string
-
-/*
-	// TODO DEPRECATE
-	dataapikey string
-	method     string
-	id         string
-	file          string
-	fields        string
-	fieldsSlice   []string
-	segments      string
-	segmentsSlice []string
-	entitytype    string
-	fieldname     string
-	fieldvalue    string
-	table         string
-	limit         int
-*/
 )
 
 var (
@@ -47,6 +30,8 @@ func init() {
 func addCommand(c cli.Command) {
 	commands = append(commands, c)
 }
+
+// Run main entrypoint for CLI command.
 func Run() {
 
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
@@ -107,25 +92,6 @@ func resultWriteTable(cliCtx *cli.Context, list []lytics.TableWriter) {
 	}
 	fmt.Println(table.Render())
 }
-
-/*
-func writeToFile(file, data string) error {
-	err := ioutil.WriteFile(file, []byte(data), 0644)
-	return err
-}
-
-func appendToFile(file, data string) error {
-	f, err := os.OpenFile(file, os.O_APPEND|os.O_WRONLY, 0600)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	if _, err = f.WriteString(data); err != nil {
-		return err
-	}
-	return nil
-}
-*/
 
 func exitIfErr(err error, msg string, args ...interface{}) {
 	if err != nil {
