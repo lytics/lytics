@@ -67,7 +67,8 @@ func schemaTableGet(c *cli.Context) error {
 	exitIfErr(err, "Could not get schema %q from api", id)
 	list := make([]lytics.TableWriter, len(item.Columns))
 	for i, item := range item.Columns {
-		list[i] = &item
+		val := item
+		list[i] = &val
 	}
 	resultWrite(c, list)
 	return nil
