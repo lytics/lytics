@@ -39,6 +39,9 @@ func entityGet(c *cli.Context) error {
 	}
 	id := c.Args().First()
 	table := c.String("table")
+	if table == "" {
+		table = "user"
+	}
 	parts := strings.Split(id, "/")
 	if len(parts) != 2 {
 		return fmt.Errorf("expected:    fieldname/value    with / slash in between got %q", id)
