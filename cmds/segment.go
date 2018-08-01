@@ -31,6 +31,11 @@ func init() {
 				Action: segmentList,
 			},
 			{
+				Name:   "listql",
+				Usage:  "List Segment QL Queries",
+				Action: segmentQlList,
+			},
+			{
 				Name:      "scan",
 				Usage:     "List Entities in a Segment.  NOTE, this is new-line delimitted json output.",
 				ArgsUsage: "[id or slug of Segment]",
@@ -66,6 +71,16 @@ func segmentList(c *cli.Context) error {
 	resultWrite(c, list)
 	return nil
 }
+func segmentQlList(c *cli.Context) error {
+	items, err := client.GetSegments(c.String("table"))
+	exitIfErr(err, "Could not get segment ql list")
+	list := make([]lytics.TableWriter, len(items))
+	for i, item := range items {
+		list[i] = &segmentQl{item}
+	}
+	resultWrite(c, list)
+	return nil
+}
 func segmentScan(c *cli.Context) error {
 	if len(c.Args()) == 0 {
 		return fmt.Errorf("expected one arg (id)")
@@ -76,6 +91,21 @@ func segmentScan(c *cli.Context) error {
 		fmt.Println(e.PrettyJson())
 	})
 	return nil
+}
+
+type segmentQl struct {
+	*lytics.Segment
+}
+
+func (m *segmentQl) Headers() []interface{} {
+	return []interface{}{
+		"ID", "alias", "ql",
+	}
+}
+func (m *segmentQl) Row() []interface{} {
+	return []interface{}{
+		m.Id, m.SlugName, m.FilterQL,
+	}
 }
 
 /*
