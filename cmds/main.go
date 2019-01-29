@@ -1,6 +1,7 @@
 package cmds
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -13,8 +14,9 @@ import (
 )
 
 var (
-	apikey       string
-	outputFormat string
+	apikey          string
+	outputFormat    string
+	userCreatedName string
 )
 
 var (
@@ -48,9 +50,15 @@ func Run() {
 		},
 		cli.StringFlag{
 			Name:        "format, f",
-			Usage:       "Format [json, table] to print results as",
+			Usage:       "Format [json, table, csv] to print results as",
 			Value:       "table",
 			Destination: &outputFormat,
+		},
+		cli.StringFlag{
+			Name:        "name, n",
+			Usage:       "Name for csv filename",
+			Value:       "",
+			Destination: &userCreatedName,
 		},
 	}
 	app.Before = func(c *cli.Context) error {
@@ -63,7 +71,11 @@ func Run() {
 	exitIfErr(err, "Could not run")
 }
 
-func resultWrite(cliCtx *cli.Context, result interface{}) {
+func resultWrite(cliCtx *cli.Context, result interface{}, name string) {
+	if userCreatedName != "" {
+		name = userCreatedName
+	}
+
 	switch outputFormat {
 	case "table":
 		switch val := result.(type) {
@@ -79,6 +91,45 @@ func resultWrite(cliCtx *cli.Context, result interface{}) {
 		jsonOut, err := json.MarshalIndent(result, "", "  ")
 		exitIfErr(err, "Could not marshal json")
 		fmt.Printf("%s\n", string(jsonOut))
+
+	case "csv":
+		switch val := result.(type) {
+		case []lytics.TableWriter:
+			resultWriteCSV(val, name)
+		case lytics.TableWriter:
+			resultWriteCSV([]lytics.TableWriter{val}, name)
+		default:
+			exitIfErr(fmt.Errorf("expected tablewriter got %T", result), "Wrong type")
+		}
+	}
+
+}
+
+func resultWriteCSV(list []lytics.TableWriter, name string) {
+	filename := fmt.Sprintf("%s.csv", name)
+	file, err := os.Create(filename)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+
+	w := csv.NewWriter(file)
+
+	h := toStringArr(list[0].Headers())
+	if err := w.Write(h); err != nil {
+		log.Fatalln("error writing header to csv:", err)
+	}
+
+	for _, item := range list {
+		r := toStringArr(item.Row())
+		if err := w.Write(r); err != nil {
+			log.Fatalln("error writing record to csv:", err)
+		}
+	}
+
+	w.Flush()
+	if err := w.Error(); err != nil {
+		log.Fatal(err)
 	}
 }
 
@@ -104,4 +155,12 @@ func exitIfErr(err error, msg string, args ...interface{}) {
 func errExit(err error, msg string) {
 	fmt.Fprintf(os.Stderr, "%v: %s\n", err, msg)
 	os.Exit(1)
+}
+
+func toStringArr(inter []interface{}) []string {
+	strArr := make([]string, len(inter))
+	for i, field := range inter {
+		strArr[i] = fmt.Sprint(field)
+	}
+	return strArr
 }

@@ -70,7 +70,7 @@ func schemaTableGet(c *cli.Context) error {
 		val := item
 		list[i] = &val
 	}
-	resultWrite(c, list)
+	resultWrite(c, list, fmt.Sprintf("schema_table_%s"))
 	return nil
 }
 func schemaTableList(c *cli.Context) error {
@@ -80,7 +80,7 @@ func schemaTableList(c *cli.Context) error {
 	for _, item := range items {
 		list = append(list, item)
 	}
-	resultWrite(c, list)
+	resultWrite(c, list, "schema_table_list")
 	return nil
 }
 func schemaQueryGet(c *cli.Context) error {
@@ -90,7 +90,7 @@ func schemaQueryGet(c *cli.Context) error {
 	id := c.Args().First()
 	item, err := client.GetQuery(id)
 	exitIfErr(err, "Could not get schema query %q from api", id)
-	resultWrite(c, &item)
+	resultWrite(c, &item, fmt.Sprintf("schema_query_%s", item.Id))
 	return nil
 }
 func schemaQueryList(c *cli.Context) error {
@@ -100,6 +100,6 @@ func schemaQueryList(c *cli.Context) error {
 	for _, item := range items {
 		list = append(list, item)
 	}
-	resultWrite(c, list)
+	resultWrite(c, list, "schema_query_list")
 	return nil
 }

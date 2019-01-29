@@ -58,7 +58,7 @@ func segmentGet(c *cli.Context) error {
 	id := c.Args().First()
 	item, err := client.GetSegment(id)
 	exitIfErr(err, "Could not get segment %q from api", id)
-	resultWrite(c, &item)
+	resultWrite(c, &item, fmt.Sprintf("segment_%s", item.Name))
 	return nil
 }
 func segmentList(c *cli.Context) error {
@@ -68,7 +68,7 @@ func segmentList(c *cli.Context) error {
 	for i, item := range items {
 		list[i] = item
 	}
-	resultWrite(c, list)
+	resultWrite(c, list, "segment_list")
 	return nil
 }
 func segmentQlList(c *cli.Context) error {
@@ -78,7 +78,7 @@ func segmentQlList(c *cli.Context) error {
 	for i, item := range items {
 		list[i] = &segmentQl{item}
 	}
-	resultWrite(c, list)
+	resultWrite(c, list, "segmentQL list")
 	return nil
 }
 func segmentScan(c *cli.Context) error {
