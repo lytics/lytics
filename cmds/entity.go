@@ -83,7 +83,7 @@ func entityGet(c *cli.Context) error {
 		exitIfErr(err, "Could not marshal json")
 		fmt.Printf("%s\n", string(jsonOut))
 	default:
-		resultWrite(c, &ent.Fields)
+		resultWrite(c, &ent.Fields, "entity")
 	}
 
 	return nil

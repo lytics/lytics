@@ -51,7 +51,7 @@ func accountShow(c *cli.Context) error {
 	}
 	item, err := client.GetAccount(accountId)
 	exitIfErr(err, "Could not get account %q from api", accountId)
-	resultWrite(c, &item)
+	resultWrite(c, &item, fmt.Sprintf("account_%s", item.Name))
 	return nil
 }
 func accountList(c *cli.Context) error {
@@ -61,7 +61,7 @@ func accountList(c *cli.Context) error {
 	for i, item := range items {
 		list[i] = item
 	}
-	resultWrite(c, list)
+	resultWrite(c, list, "account_list")
 	return nil
 }
 func accountUserGet(c *cli.Context) error {
@@ -71,7 +71,7 @@ func accountUserGet(c *cli.Context) error {
 	id := c.Args().First()
 	item, err := client.GetUser(id)
 	exitIfErr(err, "Could not get admin-user %s", id)
-	resultWrite(c, &item)
+	resultWrite(c, &item, fmt.Sprintf("account_%s", item.Name))
 	return nil
 }
 func accountUserList(c *cli.Context) error {
@@ -81,6 +81,6 @@ func accountUserList(c *cli.Context) error {
 	for i, item := range items {
 		list[i] = item
 	}
-	resultWrite(c, list)
+	resultWrite(c, list, "account_user_list")
 	return nil
 }

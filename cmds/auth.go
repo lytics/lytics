@@ -36,7 +36,7 @@ func authGet(c *cli.Context) error {
 	id := c.Args().First()
 	item, err := client.GetAuth(id)
 	exitIfErr(err, "Could not get auth %q from api", id)
-	resultWrite(c, &item)
+	resultWrite(c, &item, fmt.Sprintf("auth_%s", item.Name))
 	return nil
 }
 func authList(c *cli.Context) error {
@@ -46,6 +46,6 @@ func authList(c *cli.Context) error {
 	for i, item := range items {
 		list[i] = item
 	}
-	resultWrite(c, list)
+	resultWrite(c, list, "auth_List")
 	return nil
 }
