@@ -17,7 +17,7 @@ func init() {
 		Action:   run,
 		Flags: []cli.Flag{
 			cli.StringFlag{
-				Name:        "ouput",
+				Name:        "output",
 				Usage:       "specify what segmentML csv's or tables to output default: all; individual options: features, predictions, overview",
 				Value:       "all",
 				Destination: &segMlOutput,
