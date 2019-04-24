@@ -162,3 +162,22 @@ echo '[
 
 
 ```
+ ### SegmentML example
+
+```
+# replace {your model name here} with target_audience::source_audience
+
+# generates tables
+lytics segmentml --output all {your model name here}
+lytics segmentml --output features {your model name here}
+lytics segmentml --output predictions {your model name here}
+lytics segmentml --output overview {your model name here}
+
+# for csv output
+lytics --format csv segmentml --output all {your model name here}
+
+# for json
+lytics --format json segmentml --output all {your model name here}
+
+```
+
