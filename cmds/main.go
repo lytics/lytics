@@ -7,8 +7,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/apcera/termtables"
 	"github.com/araddon/gou"
+	"github.com/elek/termtables"
 	lytics "github.com/lytics/go-lytics"
 	"github.com/urfave/cli"
 )
