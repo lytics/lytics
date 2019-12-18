@@ -13,13 +13,13 @@ func init() {
 		Usage:    "Segment Info",
 		Category: "Management API",
 		Flags: []cli.Flag{
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "table",
 				Usage: "table to limit list of segments",
 				Value: "user",
 			},
 		},
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:   "get",
 				Usage:  "Show details of requested segment",
@@ -41,7 +41,7 @@ func init() {
 				ArgsUsage: "[id or slug of Segment]",
 				Action:    segmentScan,
 				Flags: []cli.Flag{
-					cli.Int64Flag{
+					&cli.Int64Flag{
 						Name:  "limit",
 						Usage: "limit to x entities in scan list",
 						Value: 0,
@@ -52,7 +52,7 @@ func init() {
 	})
 }
 func segmentGet(c *cli.Context) error {
-	if len(c.Args()) == 0 {
+	if c.NArg() == 0 {
 		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()
@@ -82,7 +82,7 @@ func segmentQlList(c *cli.Context) error {
 	return nil
 }
 func segmentScan(c *cli.Context) error {
-	if len(c.Args()) == 0 {
+	if c.NArg() == 0 {
 		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()
@@ -140,7 +140,6 @@ func (c *Cli) getSegmentAttributions(segments []string, limit int) (interface{},
 func getEntityScan(segmentIdOrQl string, limit int, handler lytics.EntityHandler) {
 
 	scan := client.PageSegment(segmentIdOrQl)
-
 	ct := 0
 	// handle processing the entities
 	for {

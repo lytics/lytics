@@ -6,8 +6,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/apcera/termtables"
 	"github.com/araddon/gou"
+	"github.com/olekukonko/tablewriter"
 	"github.com/urfave/cli"
 )
 
@@ -17,13 +17,13 @@ func init() {
 		Usage:    "Entity Api:  Read a single User (or other table entity type) from a Table.",
 		Category: "Data API",
 		Flags: []cli.Flag{
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:  "table",
 				Usage: "table that describes the fields of this entity type/table.",
 				Value: "user",
 			},
 		},
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "get",
 				Usage:     "Show full entity detail",
@@ -34,7 +34,7 @@ func init() {
 	})
 }
 func entityGet(c *cli.Context) error {
-	if len(c.Args()) == 0 {
+	if c.NArg() == 0 {
 		return fmt.Errorf("expected one arg (field/fieldval)")
 	}
 	id := c.Args().First()
@@ -63,9 +63,9 @@ func entityGet(c *cli.Context) error {
 		}
 		sort.Strings(cols)
 
-		table := termtables.CreateTable()
-		headers := []interface{}{"field", "by", "value"}
-		table.AddHeaders(headers...)
+		tableString := &strings.Builder{}
+		table := tablewriter.NewWriter(tableString)
+		table.SetHeader([]string{"field", "by", "value"})
 		for _, col := range cols {
 			byf := ""
 			if _, isBy := by[col]; isBy {
@@ -73,10 +73,12 @@ func entityGet(c *cli.Context) error {
 			}
 
 			if val, ok := ent.Fields[col]; ok {
-				table.AddRow(col, byf, val)
+				table.Append(rowToString([]interface{}{col, byf, val}))
 			}
 		}
-		fmt.Println(table.Render())
+		table.SetAutoFormatHeaders(false)
+		table.Render()
+		fmt.Println(tableString.String())
 
 	case "json":
 		jsonOut, err := json.MarshalIndent(ent.Fields, "", "  ")

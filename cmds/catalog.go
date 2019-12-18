@@ -12,11 +12,11 @@ func init() {
 		Name:     "schema",
 		Usage:    "Schema (Catalog) information about Lytics Tables & Queries",
 		Category: "Data API",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:  "tables",
 				Usage: "Api of tables that make up schema",
-				Subcommands: []cli.Command{
+				Subcommands: []*cli.Command{
 					{
 						Name:      "get",
 						Usage:     "Show details of current requested table schema",
@@ -34,7 +34,7 @@ func init() {
 			{
 				Name:  "queries",
 				Usage: "Api of queries that make up schema",
-				Subcommands: []cli.Command{
+				Subcommands: []*cli.Command{
 					{
 						Name:      "get",
 						Usage:     "Show details of single query by alias",
@@ -60,7 +60,7 @@ func init() {
 
 func schemaTableGet(c *cli.Context) error {
 	id := "user"
-	if len(c.Args()) > 0 {
+	if c.NArg() > 0 {
 		id = c.Args().First()
 	}
 	item, err := client.GetSchemaTable(id)
@@ -84,7 +84,7 @@ func schemaTableList(c *cli.Context) error {
 	return nil
 }
 func schemaQueryGet(c *cli.Context) error {
-	if len(c.Args()) == 0 {
+	if c.NArg() == 0 {
 		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()

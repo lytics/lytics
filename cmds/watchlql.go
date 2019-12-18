@@ -19,7 +19,7 @@ import (
 )
 
 func schemaQueryWatch(c *cli.Context) error {
-	if len(c.Args()) == 0 {
+	if c.NArg() == 0 {
 		return fmt.Errorf(`expected one arg ( ".")`)
 	}
 	l := newLql()

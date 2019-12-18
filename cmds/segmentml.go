@@ -16,7 +16,7 @@ func init() {
 		Category: "Data API",
 		Action:   run,
 		Flags: []cli.Flag{
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name:        "output",
 				Usage:       "specify what segmentML csv's or tables to output default: all; individual options: features, predictions, overview",
 				Value:       "all",
@@ -49,7 +49,7 @@ func run(c *cli.Context) error {
 }
 
 func segMlFeatures(c *cli.Context) error {
-	if len(c.Args()) == 0 {
+	if c.NArg() == 0 {
 		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()
@@ -68,7 +68,7 @@ func segMlFeatures(c *cli.Context) error {
 }
 
 func segMlPredictions(c *cli.Context) error {
-	if len(c.Args()) == 0 {
+	if c.NArg() == 0 {
 		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()
@@ -89,7 +89,7 @@ func segMlPredictions(c *cli.Context) error {
 }
 
 func segMlOverview(c *cli.Context) error {
-	if len(c.Args()) == 0 {
+	if c.NArg() == 0 {
 		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()
