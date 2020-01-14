@@ -149,14 +149,14 @@ func resultWriteTable(cliCtx *cli.Context, list []lytics.TableWriter) {
 }
 
 func rowToString(row []interface{}) []string {
-	res := []string{}
+	res := make([]string, 0, len(row))
 	for _, val := range row {
 		str, ok := val.(string)
 		if ok {
 			res = append(res, str)
 			continue
 		}
-		res = append(res, fmt.Sprintf("%v", val))
+		res = append(res, fmt.Sprint(val))
 	}
 
 	return res
