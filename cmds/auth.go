@@ -12,7 +12,7 @@ func init() {
 		Name:     "auth",
 		Usage:    "Auth Token/Keys provided to Lytics",
 		Category: "Management API",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:        "get",
 				Usage:       "Show details of current requested id auth (but not encrypted values)",
@@ -30,7 +30,7 @@ func init() {
 	})
 }
 func authGet(c *cli.Context) error {
-	if len(c.Args()) == 0 {
+	if c.NArg() == 0 {
 		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()

@@ -12,7 +12,7 @@ func init() {
 		Name:     "account",
 		Usage:    "Account Info",
 		Category: "Management API",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:   "get",
 				Usage:  "Show details of current authenticated account",
@@ -29,7 +29,7 @@ func init() {
 		Name:     "accountuser",
 		Usage:    "Account Admin User Info",
 		Category: "Management API",
-		Subcommands: []cli.Command{
+		Subcommands: []*cli.Command{
 			{
 				Name:      "get",
 				Usage:     "Show details of single account-user",
@@ -46,7 +46,7 @@ func init() {
 }
 func accountShow(c *cli.Context) error {
 	accountId := apikey
-	if len(c.Args()) == 1 {
+	if c.NArg() == 1 {
 		accountId = c.Args().First()
 	}
 	item, err := client.GetAccount(accountId)
@@ -65,7 +65,7 @@ func accountList(c *cli.Context) error {
 	return nil
 }
 func accountUserGet(c *cli.Context) error {
-	if len(c.Args()) == 0 {
+	if c.NArg() == 0 {
 		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()

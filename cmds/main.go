@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/araddon/gou"
-	"github.com/elek/termtables"
 	lytics "github.com/lytics/go-lytics"
+	"github.com/olekukonko/tablewriter"
 	"github.com/urfave/cli"
 )
 
@@ -22,7 +23,7 @@ var (
 var (
 	app      *cli.App
 	client   *lytics.Client
-	commands = make([]cli.Command, 0)
+	commands = make([]*cli.Command, 0)
 )
 
 func init() {
@@ -30,7 +31,7 @@ func init() {
 	gou.SetColorOutput()
 }
 func addCommand(c cli.Command) {
-	commands = append(commands, c)
+	commands = append(commands, &c)
 }
 
 // Run main entrypoint for CLI command.
@@ -42,19 +43,19 @@ func Run() {
 	app.Usage = "Lytics command line tools"
 	app.Version = "0.1"
 	app.Flags = []cli.Flag{
-		cli.StringFlag{
+		&cli.StringFlag{
 			Name:        "authtoken, t",
 			Usage:       "auth token for Lytics api",
-			EnvVar:      "LIOKEY,LYTICS_AUTH_TOKEN",
+			EnvVars:     []string{"LIOKEY", "LYTICS_AUTH_TOKEN"},
 			Destination: &apikey,
 		},
-		cli.StringFlag{
+		&cli.StringFlag{
 			Name:        "format, f",
 			Usage:       "Format [json, table, csv] to print results as",
 			Value:       "table",
 			Destination: &outputFormat,
 		},
-		cli.StringFlag{
+		&cli.StringFlag{
 			Name:        "name, n",
 			Usage:       "Name for csv filename",
 			Value:       "",
@@ -134,14 +135,31 @@ func resultWriteCSV(list []lytics.TableWriter, name string) {
 }
 
 func resultWriteTable(cliCtx *cli.Context, list []lytics.TableWriter) {
-	table := termtables.CreateTable()
+	tableString := &strings.Builder{}
+	table := tablewriter.NewWriter(tableString)
 	for i, row := range list {
 		if i == 0 {
-			table.AddHeaders(row.Headers()...)
+			table.SetHeader(rowToString(row.Headers()))
 		}
-		table.AddRow(row.Row()...)
+		table.Append(rowToString(row.Row()))
 	}
-	fmt.Println(table.Render())
+	table.SetAutoFormatHeaders(false)
+	table.Render()
+	fmt.Println(tableString.String())
+}
+
+func rowToString(row []interface{}) []string {
+	res := make([]string, 0, len(row))
+	for _, val := range row {
+		str, ok := val.(string)
+		if ok {
+			res = append(res, str)
+			continue
+		}
+		res = append(res, fmt.Sprint(val))
+	}
+
+	return res
 }
 
 func exitIfErr(err error, msg string, args ...interface{}) {
