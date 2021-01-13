@@ -6,7 +6,19 @@ We would love any feature requests or ideas that would make this useful to you.
 
 ## Installation
 
-Download a binary from [the releases page](https://github.com/lytics/lytics/releases) and rename to `lytics`.
+Download a binary from [the releases page](https://github.com/lytics/lytics/releases) and rename to `lytics`:
+
+```bash
+# linux/amd64
+curl -Lo lytics https://github.com/lytics/lytics/releases/download/latest/lytics_linux \
+  && chmod +x lytics \
+  && sudo mv lytics /usr/local/bin/
+
+# darwin/amd64
+curl -Lo lytics https://github.com/lytics/lytics/releases/download/latest/lytics_mac \
+  && chmod +x lytics \
+  && sudo mv lytics /usr/local/bin/
+```
 
 Or install from source:
 
@@ -43,13 +55,13 @@ Exporting CSV files, with usage.
 # Scan a segment by id
 lytics segment scan ab93a9801a72871d689342556b0de2e9 | jq '.'
 
-# Scan a segment by Slug
+# Scan a segment by slug
 lytics segment scan last_2_hours | jq '.'
 
-# write out this segment to temp file so we can play with jq
+# write out this segment to a temp file so we can play with JQ
 lytics segment scan last_2_hours > /tmp/users.json
 
-# same thing but with "Ad hoc query"
+# same thing but with an "ad hoc query"
 lytics segment scan '
 FILTER AND (
     lastvisit_ts > "now-2d"
@@ -62,7 +74,7 @@ FROM user
 cat /tmp/users.json | \
  jq -c ' {country: .country, city: .city, org: .org, uid: ._uid, visitct: .visitct} '
 
-# create a csv file from these users
+# create a CSV file from these users
 echo "country,city,org,uid,visitct\n" > /tmp/users.csv
 cat /tmp/users.json | \
  jq -r ' [ .country, .city, .org,  ._uid, .visitct ] | @csv ' >> /tmp/users.csv
@@ -71,21 +83,21 @@ cat /tmp/users.json | \
 ### Lytics Watch Usage
 
 1. Create NAME.lql (any name) file in a folder.
-2. Assuming you already have data collected, it will use our API to show recent examples against that lql.
+2. Assuming you already have data collected, it will use our API to show recent examples against that LQL.
 
 You can open and edit in an editor. Every time you edit it will print resulting users it interpreted from recent data to our API.
 
 ***Example***
 
 ```bash
-# get your API key from web app account settings
+# get your API key from the web app account settings screen
 export LIOKEY="your_api_key"
 
 cd /path/to/your/project
 
-# create an lql file
-# - utilize the lytics app "Data -> Data Streams" section to see
-#   data fields you are sending to lytics.
+# create an LQL file
+# - utilize the Lytics app "Data -> Data Streams" section to see
+#   data fields you are sending to Lytics.
 
 # you can create this in an editor as well
 echo '
@@ -112,9 +124,9 @@ lytics schema queries watch .
 ### Lytics Watch With Custom Data
 
 1. Create NAME.lql (any name) file in a folder.
-2. Create NAME.json (any name, must match lql file name) in folder.
+2. Create NAME.json (any name, must match LQL file name) in folder.
 3. Run the `lytics watch` command from the folder with files.
-4. Edit .lql, or .json files, upon change the evaluated result of .lql, JSON will be output.
+4. Edit .lql, or .json files, upon change the evaluated result of the .lql, JSON will be output.
 
 ***Example***
 
@@ -127,7 +139,7 @@ cd /tmp
 # start watching in background
 lytics schema queries watch &
 
-# create an lql file
+# create an LQL file
 echo '
 SELECT
    user_id,
@@ -142,7 +154,7 @@ BY user_id
 ALIAS hello
 ' > hello.lql
 
-# Create JSON data of events to feed into lql query
+# Create an array of JSON events to feed into LQL query
 echo '[
     {"user_id":"dump123","name":"Down With","company":"Trump", "event":"project.create", "ts":"2016-11-09"},
     {"user_id":"another234","name":"No More","company":"Trump", "event":"project.signup","user.city":"Portland","user.state":"Or", "ts":"2016-11-09"}
