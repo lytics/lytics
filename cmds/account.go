@@ -45,12 +45,12 @@ func init() {
 	})
 }
 func accountShow(c *cli.Context) error {
-	accountId := apikey
+	accountID := apikey
 	if c.NArg() == 1 {
-		accountId = c.Args().First()
+		accountID = c.Args().First()
 	}
-	item, err := client.GetAccount(accountId)
-	exitIfErr(err, "Could not get account %q from api", accountId)
+	item, err := client.GetAccount(accountID)
+	exitIfErr(err, "Could not get account %q from api", accountID)
 	resultWrite(c, &item, fmt.Sprintf("account_%s", item.Name))
 	return nil
 }

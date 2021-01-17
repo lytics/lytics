@@ -137,9 +137,9 @@ func (c *Cli) getSegmentAttributions(segments []string, limit int) (interface{},
 }
 */
 
-func getEntityScan(segmentIdOrQl string, limit int, handler lytics.EntityHandler) {
+func getEntityScan(segmentIDOrQl string, limit int, handler lytics.EntityHandler) {
 
-	scan := client.PageSegment(segmentIdOrQl)
+	scan := client.PageSegment(segmentIDOrQl)
 	ct := 0
 	// handle processing the entities
 	for {
