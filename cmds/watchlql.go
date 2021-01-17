@@ -36,11 +36,11 @@ type datafile struct {
 	stream        string
 }
 
-func (d *datafile) loadJson(of string) {
+func (d *datafile) loadJSON(of string) {
 	by, err := ioutil.ReadFile("./" + of)
 	exitIfErr(err, fmt.Sprintf("Could not read json file %v", of))
 	l := make([]map[string]interface{}, 0)
-	err = json.Unmarshal(MakeJsonList(by), &l)
+	err = json.Unmarshal(MakeJSONList(by), &l)
 	exitIfErr(err, "Invalid json file")
 
 	qsargs := make([]url.Values, 0, len(l))
@@ -258,7 +258,7 @@ func (l *lql) handleFile(of string, showOutput bool) {
 		df.loadCsv(of)
 	case strings.HasSuffix(f, ".json"):
 		//log.Println("handle json file ", f)
-		df.loadJson(of)
+		df.loadJSON(of)
 	default:
 		return
 	}
@@ -303,8 +303,8 @@ func (l *lql) watch() {
 	}
 }
 
-// Convert a slice of bytes into an array by ensuring it is wrapped with []
-func MakeJsonList(b []byte) []byte {
+// MakeJSONList converts a slice of bytes into an array by ensuring it is wrapped with []
+func MakeJSONList(b []byte) []byte {
 	if !bytes.HasPrefix(b, []byte{'['}) {
 		b = append([]byte{'['}, b...)
 		b = append(b, ']')

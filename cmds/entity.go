@@ -54,7 +54,7 @@ func entityGet(c *cli.Context) error {
 	case "table":
 		cols := make([]string, 0, len(ent.Fields))
 		by := make(map[string]bool)
-		for k, _ := range ent.Fields {
+		for k := range ent.Fields {
 			cols = append(cols, strings.ToLower(k))
 		}
 		byfields := gou.JsonHelper(ent.Meta).Strings("by_fields")
