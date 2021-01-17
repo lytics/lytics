@@ -70,7 +70,7 @@ func schemaTableGet(c *cli.Context) error {
 		val := item
 		list[i] = &val
 	}
-	resultWrite(c, list, fmt.Sprintf("schema_table_%s"))
+	resultWrite(c, list, fmt.Sprintf("schema_table_%s", id))
 	return nil
 }
 func schemaTableList(c *cli.Context) error {
