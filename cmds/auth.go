@@ -17,7 +17,7 @@ func init() {
 				Name:        "get",
 				Usage:       "Show details of current requested id auth (but not encrypted values)",
 				UsageText:   "Get Detail of Single Auth",
-				Description: "no really, there is a lot of details",
+				Description: "No really, there is a lot of details",
 				ArgsUsage:   "[id of auth]",
 				Action:      authGet,
 			},
@@ -31,11 +31,11 @@ func init() {
 }
 func authGet(c *cli.Context) error {
 	if c.NArg() == 0 {
-		return fmt.Errorf("expected one arg (id)")
+		return fmt.Errorf("Expected one arg (id)")
 	}
 	id := c.Args().First()
 	item, err := client.GetAuth(id)
-	exitIfErr(err, "Could not get auth %q from api", id)
+	exitIfErr(err, "Could not get auth %q from API", id)
 	resultWrite(c, &item, fmt.Sprintf("auth_%s", item.Name))
 	return nil
 }

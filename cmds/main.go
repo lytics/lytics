@@ -45,7 +45,7 @@ func Run() {
 	app.Flags = []cli.Flag{
 		&cli.StringFlag{
 			Name:        "authtoken, t",
-			Usage:       "auth token for Lytics api",
+			Usage:       "Auth token for Lytics API",
 			EnvVars:     []string{"LIOKEY", "LYTICS_AUTH_TOKEN"},
 			Destination: &apikey,
 		},
@@ -57,7 +57,7 @@ func Run() {
 		},
 		&cli.StringFlag{
 			Name:        "name, n",
-			Usage:       "Name for csv filename",
+			Usage:       "Name for CSV filename",
 			Value:       "",
 			Destination: &userCreatedName,
 		},
@@ -90,7 +90,7 @@ func resultWrite(cliCtx *cli.Context, result interface{}, name string) {
 
 	case "json":
 		jsonOut, err := json.MarshalIndent(result, "", "  ")
-		exitIfErr(err, "Could not marshal json")
+		exitIfErr(err, "Could not marshal JSON")
 		fmt.Printf("%s\n", string(jsonOut))
 
 	case "csv":
@@ -100,7 +100,7 @@ func resultWrite(cliCtx *cli.Context, result interface{}, name string) {
 		case lytics.TableWriter:
 			resultWriteCSV([]lytics.TableWriter{val}, name)
 		default:
-			exitIfErr(fmt.Errorf("expected tablewriter got %T", result), "Wrong type")
+			exitIfErr(fmt.Errorf("Expected tablewriter got %T", result), "Wrong type")
 		}
 	}
 
@@ -118,13 +118,13 @@ func resultWriteCSV(list []lytics.TableWriter, name string) {
 
 	h := toStringArr(list[0].Headers())
 	if err := w.Write(h); err != nil {
-		log.Fatalln("error writing header to csv:", err)
+		log.Fatalln("Error writing header to CSV:", err)
 	}
 
 	for _, item := range list {
 		r := toStringArr(item.Row())
 		if err := w.Write(r); err != nil {
-			log.Fatalln("error writing record to csv:", err)
+			log.Fatalln("Error writing record to CSV:", err)
 		}
 	}
 
@@ -165,7 +165,7 @@ func rowToString(row []interface{}) []string {
 func exitIfErr(err error, msg string, args ...interface{}) {
 	if err != nil {
 		args = append(args, err)
-		fmt.Fprintf(os.Stderr, msg+"err=%v\n", args)
+		fmt.Fprintf(os.Stderr, msg+" err=%v\n", args)
 		os.Exit(1)
 	}
 }

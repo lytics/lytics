@@ -50,7 +50,7 @@ func accountShow(c *cli.Context) error {
 		accountID = c.Args().First()
 	}
 	item, err := client.GetAccount(accountID)
-	exitIfErr(err, "Could not get account %q from api", accountID)
+	exitIfErr(err, "Could not get account %q from API", accountID)
 	resultWrite(c, &item, fmt.Sprintf("account_%s", item.Name))
 	return nil
 }

@@ -18,7 +18,7 @@ func init() {
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:        "output",
-				Usage:       "specify what segmentML csv's or tables to output default: all; individual options: features, predictions, overview",
+				Usage:       "Specify what segmentML CSV's or tables to output default: all; individual options: features, predictions, overview",
 				Value:       "all",
 				Destination: &segMlOutput,
 			},
@@ -40,17 +40,17 @@ func run(c *cli.Context) error {
 		err = segMlPredictions(c)
 		err = segMlOverview(c)
 	default:
-		return fmt.Errorf("specify what segmentML table to output: all, features, predictions, or overview")
+		return fmt.Errorf("Specify what segmentML table to output: all, features, predictions, or overview")
 	}
 	if err != nil {
-		return fmt.Errorf("error creating table %v", err)
+		return fmt.Errorf("Error creating table %v", err)
 	}
 	return nil
 }
 
 func segMlFeatures(c *cli.Context) error {
 	if c.NArg() == 0 {
-		return fmt.Errorf("expected one arg (id)")
+		return fmt.Errorf("Expected one arg (id)")
 	}
 	id := c.Args().First()
 	SegML, err := client.GetSegmentMLModel(id)
@@ -60,7 +60,7 @@ func segMlFeatures(c *cli.Context) error {
 		list[i] = feat
 	}
 	if len(list) == 0 {
-		return fmt.Errorf("no features")
+		return fmt.Errorf("No features")
 	}
 	name := fmt.Sprintf("Features-%s", SegML.Name)
 	resultWrite(c, list, name)
@@ -69,7 +69,7 @@ func segMlFeatures(c *cli.Context) error {
 
 func segMlPredictions(c *cli.Context) error {
 	if c.NArg() == 0 {
-		return fmt.Errorf("expected one arg (id)")
+		return fmt.Errorf("Expected one arg (id)")
 	}
 	id := c.Args().First()
 	SegML, err := client.GetSegmentMLModel(id)
@@ -81,7 +81,7 @@ func segMlPredictions(c *cli.Context) error {
 		list[i] = pred
 	}
 	if len(list) == 0 {
-		return fmt.Errorf("no predictions")
+		return fmt.Errorf("No predictions")
 	}
 	name := fmt.Sprintf("Predictions-%s", SegML.Name)
 	resultWrite(c, list, name)
@@ -90,7 +90,7 @@ func segMlPredictions(c *cli.Context) error {
 
 func segMlOverview(c *cli.Context) error {
 	if c.NArg() == 0 {
-		return fmt.Errorf("expected one arg (id)")
+		return fmt.Errorf("Expected one arg (id)")
 	}
 	id := c.Args().First()
 	SegML, err := client.GetSegmentMLModel(id)

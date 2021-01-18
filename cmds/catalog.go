@@ -15,7 +15,7 @@ func init() {
 		Subcommands: []*cli.Command{
 			{
 				Name:  "tables",
-				Usage: "Api of tables that make up schema",
+				Usage: "API of tables that make up schema",
 				Subcommands: []*cli.Command{
 					{
 						Name:      "get",
@@ -33,7 +33,7 @@ func init() {
 			},
 			{
 				Name:  "queries",
-				Usage: "Api of queries that make up schema",
+				Usage: "API of queries that make up schema",
 				Subcommands: []*cli.Command{
 					{
 						Name:      "get",
@@ -64,7 +64,7 @@ func schemaTableGet(c *cli.Context) error {
 		id = c.Args().First()
 	}
 	item, err := client.GetSchemaTable(id)
-	exitIfErr(err, "Could not get schema %q from api", id)
+	exitIfErr(err, "Could not get schema %q from API", id)
 	list := make([]lytics.TableWriter, len(item.Columns))
 	for i, item := range item.Columns {
 		val := item
@@ -85,11 +85,11 @@ func schemaTableList(c *cli.Context) error {
 }
 func schemaQueryGet(c *cli.Context) error {
 	if c.NArg() == 0 {
-		return fmt.Errorf("expected one arg (id)")
+		return fmt.Errorf("Expected one arg (id)")
 	}
 	id := c.Args().First()
 	item, err := client.GetQuery(id)
-	exitIfErr(err, "Could not get schema query %q from api", id)
+	exitIfErr(err, "Could not get schema query %q from API", id)
 	resultWrite(c, &item, fmt.Sprintf("schema_query_%s", item.Id))
 	return nil
 }

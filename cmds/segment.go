@@ -15,7 +15,7 @@ func init() {
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:  "table",
-				Usage: "table to limit list of segments",
+				Usage: "Table to limit list of segments",
 				Value: "user",
 			},
 		},
@@ -32,7 +32,7 @@ func init() {
 			},
 			{
 				Name:   "listql",
-				Usage:  "List Segment QL Queries",
+				Usage:  "List SegmentQL Queries",
 				Action: segmentQlList,
 			},
 			{
@@ -43,7 +43,7 @@ func init() {
 				Flags: []cli.Flag{
 					&cli.Int64Flag{
 						Name:  "limit",
-						Usage: "limit to x entities in scan list",
+						Usage: "Limit to x entities in scan list",
 						Value: 0,
 					},
 				},
@@ -57,7 +57,7 @@ func segmentGet(c *cli.Context) error {
 	}
 	id := c.Args().First()
 	item, err := client.GetSegment(id)
-	exitIfErr(err, "Could not get segment %q from api", id)
+	exitIfErr(err, "Could not get segment %q from API", id)
 	resultWrite(c, &item, fmt.Sprintf("segment_%s", item.Name))
 	return nil
 }
@@ -73,12 +73,12 @@ func segmentList(c *cli.Context) error {
 }
 func segmentQlList(c *cli.Context) error {
 	items, err := client.GetSegments(c.String("table"))
-	exitIfErr(err, "Could not get segment ql list")
+	exitIfErr(err, "Could not get SegmentQL list")
 	list := make([]lytics.TableWriter, len(items))
 	for i, item := range items {
 		list[i] = &segmentQl{item}
 	}
-	resultWrite(c, list, "segmentQL list")
+	resultWrite(c, list, "SegmentQL list")
 	return nil
 }
 func segmentScan(c *cli.Context) error {
