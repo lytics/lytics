@@ -125,7 +125,6 @@ func (l *lql) print(d *datafile) {
 	}
 	if len(d.lql) == 0 {
 		l.printUsingCurrentQueries(d)
-		return
 		log.Printf("No lql found for %v \n\n", d.name)
 		return
 	}
