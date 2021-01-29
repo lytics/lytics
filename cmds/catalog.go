@@ -64,7 +64,7 @@ func schemaTableGet(c *cli.Context) error {
 		id = c.Args().First()
 	}
 	item, err := client.GetSchemaTable(id)
-	exitIfErr(err, "Could not get schema %q from API", id)
+	exitIfErr(err, "could not get schema %q from API", id)
 	list := make([]lytics.TableWriter, len(item.Columns))
 	for i, item := range item.Columns {
 		val := item
@@ -75,7 +75,7 @@ func schemaTableGet(c *cli.Context) error {
 }
 func schemaTableList(c *cli.Context) error {
 	items, err := client.GetSchema()
-	exitIfErr(err, "Could not get schema tables list")
+	exitIfErr(err, "could not get schema tables list")
 	list := make([]lytics.TableWriter, 0, len(items))
 	for _, item := range items {
 		list = append(list, item)
@@ -85,17 +85,17 @@ func schemaTableList(c *cli.Context) error {
 }
 func schemaQueryGet(c *cli.Context) error {
 	if c.NArg() == 0 {
-		return fmt.Errorf("Expected one arg (id)")
+		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()
 	item, err := client.GetQuery(id)
-	exitIfErr(err, "Could not get schema query %q from API", id)
+	exitIfErr(err, "could not get schema query %q from API", id)
 	resultWrite(c, &item, fmt.Sprintf("schema_query_%s", item.Id))
 	return nil
 }
 func schemaQueryList(c *cli.Context) error {
 	items, err := client.GetQueries()
-	exitIfErr(err, "Could not get schema queries list")
+	exitIfErr(err, "could not get schema queries list")
 	list := make([]lytics.TableWriter, 0, len(items))
 	for _, item := range items {
 		list = append(list, item)

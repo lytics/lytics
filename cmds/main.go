@@ -69,7 +69,7 @@ func Run() {
 	app.Commands = commands
 
 	err := app.Run(os.Args)
-	exitIfErr(err, "Could not run")
+	exitIfErr(err, "could not run")
 }
 
 func resultWrite(cliCtx *cli.Context, result interface{}, name string) {
@@ -85,12 +85,12 @@ func resultWrite(cliCtx *cli.Context, result interface{}, name string) {
 		case lytics.TableWriter:
 			resultWriteTable(cliCtx, []lytics.TableWriter{val})
 		default:
-			exitIfErr(fmt.Errorf("expected tablewriter got %T", result), "Wrong type")
+			exitIfErr(fmt.Errorf("expected tablewriter got %T", result), "wrong type")
 		}
 
 	case "json":
 		jsonOut, err := json.MarshalIndent(result, "", "  ")
-		exitIfErr(err, "Could not marshal JSON")
+		exitIfErr(err, "could not marshal JSON")
 		fmt.Printf("%s\n", string(jsonOut))
 
 	case "csv":
@@ -100,7 +100,7 @@ func resultWrite(cliCtx *cli.Context, result interface{}, name string) {
 		case lytics.TableWriter:
 			resultWriteCSV([]lytics.TableWriter{val}, name)
 		default:
-			exitIfErr(fmt.Errorf("Expected tablewriter got %T", result), "Wrong type")
+			exitIfErr(fmt.Errorf("expected tablewriter got %T", result), "wrong type")
 		}
 	}
 

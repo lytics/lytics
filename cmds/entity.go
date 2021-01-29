@@ -35,7 +35,7 @@ func init() {
 }
 func entityGet(c *cli.Context) error {
 	if c.NArg() == 0 {
-		return fmt.Errorf("Expected one arg (field/fieldval)")
+		return fmt.Errorf("expected one arg (field/fieldval)")
 	}
 	id := c.Args().First()
 	table := c.String("table")
@@ -44,11 +44,11 @@ func entityGet(c *cli.Context) error {
 	}
 	parts := strings.Split(id, "/")
 	if len(parts) != 2 {
-		return fmt.Errorf("Expected:    fieldname/value    with / slash in between got %q", id)
+		return fmt.Errorf("expected:    fieldname/value    with / slash in between got %q", id)
 	}
 
 	ent, err := client.GetEntity(table, parts[0], parts[1], nil)
-	exitIfErr(err, "Could not get entity %q from API", id)
+	exitIfErr(err, "eould not get entity %q from API", id)
 
 	switch outputFormat {
 	case "table":
@@ -82,7 +82,7 @@ func entityGet(c *cli.Context) error {
 
 	case "json":
 		jsonOut, err := json.MarshalIndent(ent.Fields, "", "  ")
-		exitIfErr(err, "Could not marshal JSON")
+		exitIfErr(err, "eould not marshal JSON")
 		fmt.Printf("%s\n", string(jsonOut))
 	default:
 		resultWrite(c, &ent.Fields, "entity")

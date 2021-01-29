@@ -50,13 +50,13 @@ func accountShow(c *cli.Context) error {
 		accountID = c.Args().First()
 	}
 	item, err := client.GetAccount(accountID)
-	exitIfErr(err, "Could not get account %q from API", accountID)
+	exitIfErr(err, "could not get account %q from API", accountID)
 	resultWrite(c, &item, fmt.Sprintf("account_%s", item.Name))
 	return nil
 }
 func accountList(c *cli.Context) error {
 	items, err := client.GetAccounts()
-	exitIfErr(err, "Could not get account list")
+	exitIfErr(err, "could not get account list")
 	list := make([]lytics.TableWriter, len(items))
 	for i, item := range items {
 		list[i] = item
@@ -70,13 +70,13 @@ func accountUserGet(c *cli.Context) error {
 	}
 	id := c.Args().First()
 	item, err := client.GetUser(id)
-	exitIfErr(err, "Could not get admin-user %s", id)
+	exitIfErr(err, "could not get admin-user %s", id)
 	resultWrite(c, &item, fmt.Sprintf("account_%s", item.Name))
 	return nil
 }
 func accountUserList(c *cli.Context) error {
 	items, err := client.GetUsers()
-	exitIfErr(err, "Could not get account list")
+	exitIfErr(err, "could not get account list")
 	list := make([]lytics.TableWriter, len(items))
 	for i, item := range items {
 		list[i] = item

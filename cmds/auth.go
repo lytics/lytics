@@ -31,17 +31,17 @@ func init() {
 }
 func authGet(c *cli.Context) error {
 	if c.NArg() == 0 {
-		return fmt.Errorf("Expected one arg (id)")
+		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()
 	item, err := client.GetAuth(id)
-	exitIfErr(err, "Could not get auth %q from API", id)
+	exitIfErr(err, "could not get auth %q from API", id)
 	resultWrite(c, &item, fmt.Sprintf("auth_%s", item.Name))
 	return nil
 }
 func authList(c *cli.Context) error {
 	items, err := client.GetAuths()
-	exitIfErr(err, "Could not get auths list")
+	exitIfErr(err, "could not get auths list")
 	list := make([]lytics.TableWriter, len(items))
 	for i, item := range items {
 		list[i] = item

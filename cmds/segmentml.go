@@ -40,27 +40,27 @@ func run(c *cli.Context) error {
 		err = segMlPredictions(c)
 		err = segMlOverview(c)
 	default:
-		return fmt.Errorf("Specify what segmentML table to output: all, features, predictions, or overview")
+		return fmt.Errorf("specify what segmentML table to output: all, features, predictions, or overview")
 	}
 	if err != nil {
-		return fmt.Errorf("Error creating table %v", err)
+		return fmt.Errorf("error creating table %v", err)
 	}
 	return nil
 }
 
 func segMlFeatures(c *cli.Context) error {
 	if c.NArg() == 0 {
-		return fmt.Errorf("Expected one arg (id)")
+		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()
 	SegML, err := client.GetSegmentMLModel(id)
-	exitIfErr(err, "Could not get segment list")
+	exitIfErr(err, "could not get segment list")
 	list := make([]lytics.TableWriter, len(SegML.Features))
 	for i, feat := range SegML.Features {
 		list[i] = feat
 	}
 	if len(list) == 0 {
-		return fmt.Errorf("No features")
+		return fmt.Errorf("no features")
 	}
 	name := fmt.Sprintf("Features-%s", SegML.Name)
 	resultWrite(c, list, name)
@@ -69,11 +69,11 @@ func segMlFeatures(c *cli.Context) error {
 
 func segMlPredictions(c *cli.Context) error {
 	if c.NArg() == 0 {
-		return fmt.Errorf("Expected one arg (id)")
+		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()
 	SegML, err := client.GetSegmentMLModel(id)
-	exitIfErr(err, "Could not get segment list")
+	exitIfErr(err, "could not get segment list")
 	predictions := SegML.GetPredictions()
 
 	list := make([]lytics.TableWriter, len(predictions))
@@ -81,20 +81,20 @@ func segMlPredictions(c *cli.Context) error {
 		list[i] = pred
 	}
 	if len(list) == 0 {
-		return fmt.Errorf("No predictions")
+		return fmt.Errorf("no predictions")
 	}
-	name := fmt.Sprintf("Predictions-%s", SegML.Name)
+	name := fmt.Sprintf("predictions-%s", SegML.Name)
 	resultWrite(c, list, name)
 	return nil
 }
 
 func segMlOverview(c *cli.Context) error {
 	if c.NArg() == 0 {
-		return fmt.Errorf("Expected one arg (id)")
+		return fmt.Errorf("expected one arg (id)")
 	}
 	id := c.Args().First()
 	SegML, err := client.GetSegmentMLModel(id)
-	exitIfErr(err, "Could not get segment list")
+	exitIfErr(err, "could not get segment list")
 	name := fmt.Sprintf("Overview-%s", SegML.Name)
 	resultWrite(c, &SegML, name)
 	return nil

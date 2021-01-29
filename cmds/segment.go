@@ -57,13 +57,13 @@ func segmentGet(c *cli.Context) error {
 	}
 	id := c.Args().First()
 	item, err := client.GetSegment(id)
-	exitIfErr(err, "Could not get segment %q from API", id)
+	exitIfErr(err, "could not get segment %q from API", id)
 	resultWrite(c, &item, fmt.Sprintf("segment_%s", item.Name))
 	return nil
 }
 func segmentList(c *cli.Context) error {
 	items, err := client.GetSegments(c.String("table"))
-	exitIfErr(err, "Could not get segment list")
+	exitIfErr(err, "could not get segment list")
 	list := make([]lytics.TableWriter, len(items))
 	for i, item := range items {
 		list[i] = item
@@ -73,7 +73,7 @@ func segmentList(c *cli.Context) error {
 }
 func segmentQlList(c *cli.Context) error {
 	items, err := client.GetSegments(c.String("table"))
-	exitIfErr(err, "Could not get SegmentQL list")
+	exitIfErr(err, "could not get SegmentQL list")
 	list := make([]lytics.TableWriter, len(items))
 	for i, item := range items {
 		list[i] = &segmentQl{item}
