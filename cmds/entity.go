@@ -14,12 +14,12 @@ import (
 func init() {
 	addCommand(cli.Command{
 		Name:     "entity",
-		Usage:    "Entity Api:  Read a single User (or other table entity type) from a Table.",
+		Usage:    "Entity API:  Read a single User (or other table entity type) from a Table.",
 		Category: "Data API",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:  "table",
-				Usage: "table that describes the fields of this entity type/table.",
+				Usage: "Table that describes the fields of this entity type/table.",
 				Value: "user",
 			},
 		},
@@ -48,7 +48,7 @@ func entityGet(c *cli.Context) error {
 	}
 
 	ent, err := client.GetEntity(table, parts[0], parts[1], nil)
-	exitIfErr(err, "Could not get entity %q from api", id)
+	exitIfErr(err, "eould not get entity %q from API", id)
 
 	switch outputFormat {
 	case "table":
@@ -82,7 +82,7 @@ func entityGet(c *cli.Context) error {
 
 	case "json":
 		jsonOut, err := json.MarshalIndent(ent.Fields, "", "  ")
-		exitIfErr(err, "Could not marshal json")
+		exitIfErr(err, "eould not marshal JSON")
 		fmt.Printf("%s\n", string(jsonOut))
 	default:
 		resultWrite(c, &ent.Fields, "entity")

@@ -20,7 +20,7 @@ import (
 
 func schemaQueryWatch(c *cli.Context) error {
 	if c.NArg() == 0 {
-		return fmt.Errorf(`expected one arg ( ".")`)
+		return fmt.Errorf(`expected one arg (".")`)
 	}
 	l := newLql()
 	l.start()
@@ -38,10 +38,10 @@ type datafile struct {
 
 func (d *datafile) loadJSON(of string) {
 	by, err := ioutil.ReadFile("./" + of)
-	exitIfErr(err, fmt.Sprintf("Could not read json file %v", of))
+	exitIfErr(err, fmt.Sprintf("could not read JSON file %v", of))
 	l := make([]map[string]interface{}, 0)
 	err = json.Unmarshal(MakeJSONList(by), &l)
-	exitIfErr(err, "Invalid json file")
+	exitIfErr(err, "invalid JSON file")
 
 	qsargs := make([]url.Values, 0, len(l))
 	for _, row := range l {
@@ -57,12 +57,12 @@ func (d *datafile) loadJSON(of string) {
 
 func (d *datafile) loadCsv(of string) {
 	f, err := os.Open("./" + of)
-	exitIfErr(err, fmt.Sprintf("Could not read csv file %v", of))
+	exitIfErr(err, fmt.Sprintf("could not read CSV file %v", of))
 
 	csvr := csv.NewReader(f)
 	csvr.TrailingComma = true // allow empty fields
 	headers, err := csvr.Read()
-	exitIfErr(err, fmt.Sprintf("Could not read csv headers %v", of))
+	exitIfErr(err, fmt.Sprintf("could not read CSV headers %v", of))
 
 	qsargs := make([]url.Values, 0, 5)
 	rowCt := 0
@@ -73,11 +73,11 @@ func (d *datafile) loadCsv(of string) {
 			if err == io.EOF {
 				break
 			}
-			log.Fatalf("could not read csv %v", err)
+			log.Fatalf("Could not read CSV %v", err)
 			continue
 		}
 		if len(row) != len(headers) {
-			log.Fatalf("headers/cols dont match, dropping expected:%d got:%d   vals=%v\n", len(headers), len(row), row)
+			log.Fatalf("Headers/cols dont match, dropping expected:%d got:%d   vals=%v\n", len(headers), len(row), row)
 			continue
 		}
 		qs := make(url.Values)
@@ -129,7 +129,7 @@ func (l *lql) print(d *datafile) {
 		return
 	}
 
-	fmt.Printf("evaluating: %s.lql \n\n", d.name)
+	fmt.Printf("Evaluating: %s.lql \n\n", d.name)
 	for i, qs := range d.data {
 		ent, err := client.GetQueryTest(qs, d.lql)
 		if err != nil {
@@ -154,12 +154,12 @@ func (l *lql) printUsingCurrentQueries(d *datafile) {
 		return
 	}
 
-	fmt.Printf("evaluating: %q against current queries in your account \n\n", d.file)
+	fmt.Printf("Evaluating: %q against current queries in your account \n\n", d.file)
 	for i, qs := range d.data {
 
 		state, err := json.MarshalIndent(qs, "", "  ")
 		if err != nil {
-			fmt.Printf("Could not json marshal: %v \n\tfor-data: %v\n\n", err, qs.Encode())
+			fmt.Printf("Could not JSON marshal: %v \n\tfor-data: %v\n\n", err, qs.Encode())
 			continue
 		}
 		gou.Infof("data: %v", qs)
@@ -236,7 +236,7 @@ func (l *lql) handleFile(of string, showOutput bool) {
 	case strings.HasSuffix(f, ".lql"):
 		//log.Println("handle lql file ", f)
 		by, err := ioutil.ReadFile("./" + of)
-		exitIfErr(err, fmt.Sprintf("Could not read file %v", of))
+		exitIfErr(err, fmt.Sprintf("could not read file %v", of))
 		df.lql = string(by)
 
 		// Parse the lql to get stream name
@@ -290,7 +290,7 @@ func (l *lql) watch() {
 				if !ok {
 					log.Fatal("What, no errors channel")
 				} else {
-					log.Println("watch error:", err)
+					log.Println("Watch error:", err)
 				}
 
 			}

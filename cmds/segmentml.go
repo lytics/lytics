@@ -18,7 +18,7 @@ func init() {
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:        "output",
-				Usage:       "specify what segmentML csv's or tables to output default: all; individual options: features, predictions, overview",
+				Usage:       "Specify what segmentML CSV's or tables to output default: all; individual options: features, predictions, overview",
 				Value:       "all",
 				Destination: &segMlOutput,
 			},
@@ -54,7 +54,7 @@ func segMlFeatures(c *cli.Context) error {
 	}
 	id := c.Args().First()
 	SegML, err := client.GetSegmentMLModel(id)
-	exitIfErr(err, "Could not get segment list")
+	exitIfErr(err, "could not get segment list")
 	list := make([]lytics.TableWriter, len(SegML.Features))
 	for i, feat := range SegML.Features {
 		list[i] = feat
@@ -73,7 +73,7 @@ func segMlPredictions(c *cli.Context) error {
 	}
 	id := c.Args().First()
 	SegML, err := client.GetSegmentMLModel(id)
-	exitIfErr(err, "Could not get segment list")
+	exitIfErr(err, "could not get segment list")
 	predictions := SegML.GetPredictions()
 
 	list := make([]lytics.TableWriter, len(predictions))
@@ -83,7 +83,7 @@ func segMlPredictions(c *cli.Context) error {
 	if len(list) == 0 {
 		return fmt.Errorf("no predictions")
 	}
-	name := fmt.Sprintf("Predictions-%s", SegML.Name)
+	name := fmt.Sprintf("predictions-%s", SegML.Name)
 	resultWrite(c, list, name)
 	return nil
 }
@@ -94,7 +94,7 @@ func segMlOverview(c *cli.Context) error {
 	}
 	id := c.Args().First()
 	SegML, err := client.GetSegmentMLModel(id)
-	exitIfErr(err, "Could not get segment list")
+	exitIfErr(err, "could not get segment list")
 	name := fmt.Sprintf("Overview-%s", SegML.Name)
 	resultWrite(c, &SegML, name)
 	return nil

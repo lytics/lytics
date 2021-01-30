@@ -17,7 +17,7 @@ func init() {
 				Name:        "get",
 				Usage:       "Show details of current requested id auth (but not encrypted values)",
 				UsageText:   "Get Detail of Single Auth",
-				Description: "no really, there is a lot of details",
+				Description: "No really, there is a lot of details",
 				ArgsUsage:   "[id of auth]",
 				Action:      authGet,
 			},
@@ -35,13 +35,13 @@ func authGet(c *cli.Context) error {
 	}
 	id := c.Args().First()
 	item, err := client.GetAuth(id)
-	exitIfErr(err, "Could not get auth %q from api", id)
+	exitIfErr(err, "could not get auth %q from API", id)
 	resultWrite(c, &item, fmt.Sprintf("auth_%s", item.Name))
 	return nil
 }
 func authList(c *cli.Context) error {
 	items, err := client.GetAuths()
-	exitIfErr(err, "Could not get auths list")
+	exitIfErr(err, "could not get auths list")
 	list := make([]lytics.TableWriter, len(items))
 	for i, item := range items {
 		list[i] = item
