@@ -15,7 +15,7 @@ import (
 	"github.com/araddon/gou"
 	"github.com/fsnotify/fsnotify"
 	lytics "github.com/lytics/go-lytics"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 func schemaQueryWatch(c *cli.Context) error {
