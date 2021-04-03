@@ -11,7 +11,7 @@ import (
 	"github.com/araddon/gou"
 	lytics "github.com/lytics/go-lytics"
 	"github.com/olekukonko/tablewriter"
-	"github.com/urfave/cli"
+	"github.com/urfave/cli/v2"
 )
 
 var (
